@@ -157,6 +157,7 @@ async function main() {
       html,
       source: "import",
       source_path: file,
+      code_updated_at: statSync(file).mtime,
     });
     added++;
     console.log(

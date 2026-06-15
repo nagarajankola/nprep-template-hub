@@ -86,7 +86,11 @@ export const localDb = {
     const s = readStore();
     const i = s.templates.findIndex((t) => t.id === id);
     if (i === -1) return null;
-    s.templates[i] = { ...s.templates[i], ...patch, updated_at: new Date().toISOString() };
+    s.templates[i] = {
+      ...s.templates[i],
+      ...patch,
+      updated_at: patch.updated_at ?? new Date().toISOString(),
+    };
     writeStore(s);
     return s.templates[i];
   },

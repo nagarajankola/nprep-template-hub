@@ -72,7 +72,7 @@ export const supabaseDb = {
   async update(id: string, patch: Partial<Template>): Promise<Template | null> {
     const { data, error } = await client()
       .from("templates")
-      .update({ ...patch, updated_at: new Date().toISOString() })
+      .update({ ...patch, updated_at: patch.updated_at ?? new Date().toISOString() })
       .eq("id", id)
       .select("*")
       .maybeSingle();

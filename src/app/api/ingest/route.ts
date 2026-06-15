@@ -5,6 +5,7 @@ import {
   updateTemplate,
 } from "@/lib/db";
 import { toMeta, parseTags } from "@/lib/util";
+import { injectUpdatedBadge } from "@/lib/updated-badge";
 import type { Template } from "@/lib/types";
 
 // Keyed ingest — lets the global pusher (or any tool) register a prototype
@@ -24,6 +25,12 @@ export async function POST(request: Request) {
   const sourcePath = body.source_path ? String(body.source_path) : null;
   const name = String(body.name ?? "").trim();
 
+  let when = new Date();
+  if (body.code_updated_at) {
+    const d = new Date(String(body.code_updated_at));
+    if (!Number.isNaN(d.getTime())) when = d;
+  }
+
   const meta: Partial<Template> = {};
   if (name) meta.name = name;
   if (typeof body.type === "string" && body.type.trim()) meta.type = body.type.trim();
@@ -37,10 +44,12 @@ export async function POST(request: Request) {
   if (sourcePath) {
     const existing = await getTemplateBySourcePath(sourcePath);
     if (existing) {
+      const badged = injectUpdatedBadge(html, when);
       const updated = await updateTemplate(existing.id, {
         ...meta,
-        html,
-        size_bytes: Buffer.byteLength(html, "utf-8"),
+        html: badged,
+        size_bytes: Buffer.byteLength(badged, "utf-8"),
+        updated_at: when.toISOString(),
       });
       return NextResponse.json({
         action: "updated",
@@ -59,6 +68,7 @@ export async function POST(request: Request) {
     html,
     source: "import",
     source_path: sourcePath,
+    code_updated_at: when,
   });
 
   return NextResponse.json({

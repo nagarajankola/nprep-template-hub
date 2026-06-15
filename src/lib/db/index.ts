@@ -8,6 +8,7 @@ import type {
   LinkVisit,
 } from "../types";
 import { ensureUniqueSlug, shareToken } from "../slug";
+import { injectUpdatedBadge } from "../updated-badge";
 import { localDb } from "./local";
 import { supabaseDb } from "./supabase";
 
@@ -44,6 +45,8 @@ export function updateTemplate(
 export async function createTemplate(input: NewTemplateInput): Promise<Template> {
   const slugs = new Set(await backend().slugs());
   const now = new Date().toISOString();
+  const when = input.code_updated_at ?? new Date();
+  const html = injectUpdatedBadge(input.html, when);
   const row: Template = {
     id: randomUUID(),
     name: input.name.trim() || "Untitled template",
@@ -53,14 +56,14 @@ export async function createTemplate(input: NewTemplateInput): Promise<Template>
     type: (input.type ?? "Other").trim() || "Other",
     project: (input.project ?? "Unsorted").trim() || "Unsorted",
     tags: (input.tags ?? []).map((t) => t.trim()).filter(Boolean),
-    html: input.html,
-    size_bytes: Buffer.byteLength(input.html, "utf-8"),
+    html,
+    size_bytes: Buffer.byteLength(html, "utf-8"),
     source: input.source ?? "upload",
     source_path: input.source_path ?? null,
     share_token: shareToken(),
     share_enabled: true,
     created_at: now,
-    updated_at: now,
+    updated_at: when.toISOString(),
   };
   const tpl = await backend().insert(row);
   // Every template starts with one default share link (token == legacy token).

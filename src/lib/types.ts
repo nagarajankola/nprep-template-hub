@@ -32,6 +32,8 @@ export interface NewTemplateInput {
   html: string;
   source?: TemplateSource;
   source_path?: string | null;
+  /** When the prototype's code was last edited (drives the badge + updated_at). */
+  code_updated_at?: Date;
 }
 
 /** A named, revocable share link. A template can have many. */
