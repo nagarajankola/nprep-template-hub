@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { TemplateMeta } from "@/lib/types";
-import { PreviewFrame } from "./PreviewFrame";
+import { CardPreview } from "./CardPreview";
 import { useToast } from "./ui/Toaster";
 import { cn, formatBytes, formatRelative, fullDate } from "@/lib/format";
 
@@ -12,12 +12,14 @@ export function TemplateCard({
   onEdit,
   onManageLinks,
   onDelete,
+  thumbBase,
 }: {
   template: TemplateMeta;
   index: number;
   onEdit: (t: TemplateMeta) => void;
   onManageLinks: (t: TemplateMeta) => void;
   onDelete: (t: TemplateMeta) => void;
+  thumbBase: string | null;
 }) {
   const toast = useToast();
   const [menu, setMenu] = useState(false);
@@ -53,7 +55,7 @@ export function TemplateCard({
         className="relative block w-full text-left"
         title="Open preview"
       >
-        <PreviewFrame id={template.id} title={template.name} />
+        <CardPreview id={template.id} title={template.name} thumbBase={thumbBase} />
         <span className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100">
           <span className="rounded-lg bg-white/95 px-3 py-1.5 text-xs font-semibold text-midnight shadow">
             Open ↗

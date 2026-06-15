@@ -7,5 +7,14 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const session = await requireAdminPage();
   const templates = await listTemplates();
-  return <Dashboard initialTemplates={templates} username={session.sub} />;
+  const thumbBase = process.env.SUPABASE_URL
+    ? `${process.env.SUPABASE_URL}/storage/v1/object/public/thumbnails`
+    : null;
+  return (
+    <Dashboard
+      initialTemplates={templates}
+      username={session.sub}
+      thumbBase={thumbBase}
+    />
+  );
 }

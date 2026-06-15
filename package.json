@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import": "tsx scripts/import.ts"
+    "import": "tsx scripts/import.ts",
+    "thumbs": "tsx scripts/thumbs.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "playwright": "^1.48.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.0",
     "typescript": "^5"

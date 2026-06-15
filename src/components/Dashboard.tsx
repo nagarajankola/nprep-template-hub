@@ -19,13 +19,19 @@ type GroupKey = "none" | "type" | "project";
 export function Dashboard({
   initialTemplates,
   username,
+  thumbBase,
 }: {
   initialTemplates: TemplateMeta[];
   username: string;
+  thumbBase: string | null;
 }) {
   return (
     <Toaster>
-      <DashboardInner initialTemplates={initialTemplates} username={username} />
+      <DashboardInner
+        initialTemplates={initialTemplates}
+        username={username}
+        thumbBase={thumbBase}
+      />
     </Toaster>
   );
 }
@@ -49,9 +55,11 @@ function groupTemplates(
 function DashboardInner({
   initialTemplates,
   username,
+  thumbBase,
 }: {
   initialTemplates: TemplateMeta[];
   username: string;
+  thumbBase: string | null;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -130,6 +138,7 @@ function DashboardInner({
             onEdit={setEditing}
             onManageLinks={setManagingLinks}
             onDelete={remove}
+            thumbBase={thumbBase}
           />
         ))}
       </div>
