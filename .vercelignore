@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+data
+templates-inbox/*
+!templates-inbox/README.md
+.env
+.env.local
+.env*.local
+npm-debug.log*

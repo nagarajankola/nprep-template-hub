@@ -30,8 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (secrets) — keep the example committed
 .env*
+!.env.example
+
+# local JSON data store (dev) + scratch import folder
+/data/
+/templates-inbox/*
+!/templates-inbox/README.md
 
 # vercel
 .vercel
