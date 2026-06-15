@@ -70,6 +70,9 @@ export const localDb = {
   async getByToken(token: string): Promise<Template | null> {
     return readStore().templates.find((t) => t.share_token === token) ?? null;
   },
+  async getBySourcePath(p: string): Promise<Template | null> {
+    return readStore().templates.find((t) => t.source_path === p) ?? null;
+  },
   async slugs(): Promise<string[]> {
     return readStore().templates.map((t) => t.slug);
   },
