@@ -10,7 +10,7 @@ import { Toaster, useToast } from "./ui/Toaster";
 import { TemplateCard } from "./TemplateCard";
 import { UploadModal } from "./UploadModal";
 import { EditModal } from "./EditModal";
-import { LinksModal } from "./LinksModal";
+import { DetailModal } from "./DetailModal";
 import { cn } from "@/lib/format";
 
 type SortKey = "recent" | "name" | "oldest";
@@ -69,7 +69,14 @@ function DashboardInner({
   const [groupBy, setGroupBy] = useState<GroupKey>("project");
   const [uploadOpen, setUploadOpen] = useState(false);
   const [editing, setEditing] = useState<TemplateMeta | null>(null);
-  const [managingLinks, setManagingLinks] = useState<TemplateMeta | null>(null);
+  const [viewingId, setViewingId] = useState<string | null>(null);
+
+  // Derive the viewed template from live state so the detail popup stays fresh
+  // after an inline edit, and closes itself if the template gets deleted.
+  const viewing = useMemo(
+    () => templates.find((t) => t.id === viewingId) ?? null,
+    [templates, viewingId]
+  );
 
   const projects = useMemo(() => {
     const set = new Set<string>(DEFAULT_PROJECTS);
@@ -118,6 +125,7 @@ function DashboardInner({
     }
     setTemplates((prev) => prev.filter((x) => x.id !== t.id));
     setEditing(null);
+    setViewingId(null);
     toast("Template deleted");
   }
 
@@ -135,8 +143,8 @@ function DashboardInner({
             key={t.id}
             template={t}
             index={i}
+            onOpenDetail={(x) => setViewingId(x.id)}
             onEdit={setEditing}
-            onManageLinks={setManagingLinks}
             onDelete={remove}
             thumbBase={thumbBase}
           />
@@ -261,11 +269,17 @@ function DashboardInner({
           onDelete={remove}
         />
       )}
-      {managingLinks && (
-        <LinksModal
-          key={managingLinks.id}
-          template={managingLinks}
-          onClose={() => setManagingLinks(null)}
+      {viewing && (
+        <DetailModal
+          key={viewing.id}
+          template={viewing}
+          thumbBase={thumbBase}
+          onClose={() => setViewingId(null)}
+          onEdit={(t) => {
+            setViewingId(null);
+            setEditing(t);
+          }}
+          onDelete={remove}
         />
       )}
     </div>

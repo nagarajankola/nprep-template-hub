@@ -37,7 +37,11 @@ export function Modal({
     >
       <div
         className={cn(
-          "anim-pop my-auto w-full max-w-lg rounded-2xl bg-white p-6 shadow-[0_24px_60px_rgba(19,27,99,.25)]",
+          "anim-pop my-auto w-full rounded-2xl bg-white p-6 shadow-[0_24px_60px_rgba(19,27,99,.25)]",
+          // Only apply the default width when the caller didn't pass one — two
+          // competing max-w-* classes resolve by CSS source order, not className
+          // order, so a hardcoded default would silently win over the override.
+          !className?.includes("max-w-") && "max-w-lg",
           className
         )}
         onClick={(e) => e.stopPropagation()}

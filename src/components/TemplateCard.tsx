@@ -9,15 +9,15 @@ import { cn, formatBytes, formatRelative, fullDate } from "@/lib/format";
 export function TemplateCard({
   template,
   index,
+  onOpenDetail,
   onEdit,
-  onManageLinks,
   onDelete,
   thumbBase,
 }: {
   template: TemplateMeta;
   index: number;
+  onOpenDetail: (t: TemplateMeta) => void;
   onEdit: (t: TemplateMeta) => void;
-  onManageLinks: (t: TemplateMeta) => void;
   onDelete: (t: TemplateMeta) => void;
   thumbBase: string | null;
 }) {
@@ -51,14 +51,14 @@ export function TemplateCard({
       style={{ animationDelay: `${Math.min(index, 12) * 0.04}s` }}
     >
       <button
-        onClick={openPreview}
+        onClick={() => onOpenDetail(template)}
         className="relative block w-full text-left"
-        title="Open preview"
+        title="View details"
       >
         <CardPreview id={template.id} title={template.name} thumbBase={thumbBase} />
         <span className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100">
           <span className="rounded-lg bg-white/95 px-3 py-1.5 text-xs font-semibold text-midnight shadow">
-            Open ↗
+            View details
           </span>
         </span>
         {template.type && template.type !== "Other" && (
@@ -69,10 +69,18 @@ export function TemplateCard({
       </button>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-1 font-semibold text-midnight">{template.name}</h3>
-        <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-[13px] leading-relaxed text-muted">
-          {template.description || "No description yet."}
-        </p>
+        <button
+          onClick={() => onOpenDetail(template)}
+          className="block text-left"
+          title="View details"
+        >
+          <h3 className="line-clamp-1 font-semibold text-midnight transition group-hover:text-sky-600">
+            {template.name}
+          </h3>
+          <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-[13px] leading-relaxed text-muted">
+            {template.description || "No description yet."}
+          </p>
+        </button>
 
         {template.tags.length > 0 && (
           <div className="mt-2.5 flex flex-wrap gap-1.5">
@@ -109,10 +117,10 @@ export function TemplateCard({
             🔗 Copy link
           </button>
           <button
-            onClick={() => onManageLinks(template)}
+            onClick={() => onOpenDetail(template)}
             className="interactive rounded-xl border border-line px-3 py-2 text-xs font-semibold text-midnight hover:bg-ice"
           >
-            📊 Links
+            📊 Details
           </button>
           <div className="relative">
             <button
@@ -130,14 +138,14 @@ export function TemplateCard({
                 className="anim-fade-in absolute bottom-full right-0 z-20 mb-2 w-48 overflow-hidden rounded-xl border border-line bg-white py-1 shadow-lift"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MenuItem onClick={() => { setMenu(false); onManageLinks(template); }}>
-                  Links & stats
+                <MenuItem onClick={() => { setMenu(false); onOpenDetail(template); }}>
+                  View details
                 </MenuItem>
                 <MenuItem onClick={() => { setMenu(false); onEdit(template); }}>
                   Edit details
                 </MenuItem>
                 <MenuItem onClick={() => { setMenu(false); openPreview(); }}>
-                  Open preview
+                  Open full screen
                 </MenuItem>
                 <div className="my-1 h-px bg-line" />
                 <MenuItem danger onClick={() => { setMenu(false); onDelete(template); }}>
