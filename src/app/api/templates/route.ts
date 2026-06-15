@@ -34,6 +34,8 @@ export async function POST(request: Request) {
     name: String(body.name ?? "").trim() || "Untitled template",
     description: String(body.description ?? ""),
     category: String(body.category ?? "Uncategorized"),
+    type: String(body.type ?? "").trim() || undefined,
+    project: String(body.project ?? "").trim() || undefined,
     tags: parseTags(body.tags),
     html,
     source: "upload",

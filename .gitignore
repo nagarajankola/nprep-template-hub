@@ -36,6 +36,7 @@ yarn-error.log*
 
 # local JSON data store (dev) + scratch import folder
 /data/
+/data-local/
 /templates-inbox/*
 !/templates-inbox/README.md
 

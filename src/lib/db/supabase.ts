@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Template, TemplateMeta } from "../types";
+import type { Template, TemplateMeta, ShareLink, LinkVisit } from "../types";
 
 let _client: SupabaseClient | null = null;
 
@@ -15,9 +15,10 @@ function client(): SupabaseClient {
 }
 
 const META_COLS =
-  "id,name,slug,description,category,tags,size_bytes,source,source_path,share_token,share_enabled,created_at,updated_at";
+  "id,name,slug,description,category,type,project,tags,size_bytes,source,source_path,share_token,share_enabled,created_at,updated_at";
 
 export const supabaseDb = {
+  // ── templates ──
   async list(): Promise<TemplateMeta[]> {
     const { data, error } = await client()
       .from("templates")
@@ -75,5 +76,67 @@ export const supabaseDb = {
       .eq("id", id);
     if (error) throw error;
     return (count ?? 0) > 0;
+  },
+
+  // ── share links ──
+  async linksByTemplate(templateId: string): Promise<ShareLink[]> {
+    const { data, error } = await client()
+      .from("share_links")
+      .select("*")
+      .eq("template_id", templateId)
+      .order("created_at", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as ShareLink[];
+  },
+  async linkByToken(token: string): Promise<ShareLink | null> {
+    const { data, error } = await client()
+      .from("share_links")
+      .select("*")
+      .eq("token", token)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as ShareLink | null) ?? null;
+  },
+  async insertLink(row: ShareLink): Promise<ShareLink> {
+    const { data, error } = await client()
+      .from("share_links")
+      .insert(row)
+      .select("*")
+      .single();
+    if (error) throw error;
+    return data as ShareLink;
+  },
+  async updateLink(id: string, patch: Partial<ShareLink>): Promise<ShareLink | null> {
+    const { data, error } = await client()
+      .from("share_links")
+      .update(patch)
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    return (data as ShareLink | null) ?? null;
+  },
+  async removeLink(id: string): Promise<boolean> {
+    const { error, count } = await client()
+      .from("share_links")
+      .delete({ count: "exact" })
+      .eq("id", id);
+    if (error) throw error;
+    return (count ?? 0) > 0;
+  },
+
+  // ── visits ──
+  async insertVisit(row: LinkVisit): Promise<void> {
+    const { error } = await client().from("link_visits").insert(row);
+    if (error) throw error;
+  },
+  async visitsByLink(linkId: string): Promise<LinkVisit[]> {
+    const { data, error } = await client()
+      .from("link_visits")
+      .select("*")
+      .eq("link_id", linkId)
+      .order("visited_at", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as LinkVisit[];
   },
 };

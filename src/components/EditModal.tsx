@@ -6,15 +6,18 @@ import { Button } from "./ui/Button";
 import { Field, inputCls } from "./ui/Field";
 import { useToast } from "./ui/Toaster";
 import { cn } from "@/lib/format";
+import { TEMPLATE_TYPES } from "@/lib/taxonomy";
 import type { TemplateMeta } from "@/lib/types";
 
 export function EditModal({
   template,
+  projects,
   onClose,
   onSaved,
   onDelete,
 }: {
   template: TemplateMeta;
+  projects: string[];
   onClose: () => void;
   onSaved: (t: TemplateMeta) => void;
   onDelete: (t: TemplateMeta) => void;
@@ -22,7 +25,10 @@ export function EditModal({
   const toast = useToast();
   const [name, setName] = useState(template.name);
   const [description, setDescription] = useState(template.description);
-  const [category, setCategory] = useState(template.category);
+  const [type, setType] = useState(template.type || "Other");
+  const [project, setProject] = useState(
+    template.project === "Unsorted" ? "" : template.project
+  );
   const [tags, setTags] = useState(template.tags.join(", "));
   const [busy, setBusy] = useState(false);
 
@@ -32,7 +38,7 @@ export function EditModal({
       const res = await fetch(`/api/templates/${template.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, description, category, tags }),
+        body: JSON.stringify({ name, description, type, project, tags }),
       });
       const d = (await res.json().catch(() => ({}))) as {
         template?: TemplateMeta;
@@ -62,11 +68,7 @@ export function EditModal({
 
       <div className="mt-4 space-y-3">
         <Field label="Name">
-          <input
-            className={inputCls}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} />
         </Field>
         <Field label="Description">
           <textarea
@@ -77,21 +79,37 @@ export function EditModal({
           />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Category">
-            <input
+          <Field label="Type">
+            <select
               className={inputCls}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              {TEMPLATE_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
           </Field>
-          <Field label="Tags (comma-separated)">
+          <Field label="Project">
             <input
               className={inputCls}
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
+              value={project}
+              onChange={(e) => setProject(e.target.value)}
+              list="edit-projects"
+              placeholder="Unsorted"
             />
+            <datalist id="edit-projects">
+              {projects.map((p) => (
+                <option key={p} value={p} />
+              ))}
+            </datalist>
           </Field>
         </div>
+        <Field label="Tags (comma-separated)">
+          <input className={inputCls} value={tags} onChange={(e) => setTags(e.target.value)} />
+        </Field>
       </div>
 
       <div className="mt-5 flex items-center justify-between">

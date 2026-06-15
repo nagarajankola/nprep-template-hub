@@ -10,15 +10,13 @@ export function TemplateCard({
   template,
   index,
   onEdit,
-  onToggleShare,
-  onRotate,
+  onManageLinks,
   onDelete,
 }: {
   template: TemplateMeta;
   index: number;
   onEdit: (t: TemplateMeta) => void;
-  onToggleShare: (t: TemplateMeta) => void;
-  onRotate: (t: TemplateMeta) => void;
+  onManageLinks: (t: TemplateMeta) => void;
   onDelete: (t: TemplateMeta) => void;
 }) {
   const toast = useToast();
@@ -31,19 +29,11 @@ export function TemplateCard({
     return () => document.removeEventListener("click", close);
   }, [menu]);
 
-  function shareUrl() {
+  async function copyDefault() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    return `${origin}/v/${template.share_token}`;
-  }
-
-  async function copyLink() {
     try {
-      await navigator.clipboard.writeText(shareUrl());
-      toast(
-        template.share_enabled
-          ? "Share link copied"
-          : "Copied — heads up, sharing is OFF for this one"
-      );
+      await navigator.clipboard.writeText(`${origin}/v/${template.share_token}`);
+      toast("Default link copied");
     } catch {
       toast("Couldn't copy link", "err");
     }
@@ -69,20 +59,11 @@ export function TemplateCard({
             Open ↗
           </span>
         </span>
-        <span
-          className={cn(
-            "absolute right-3 top-3 flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold backdrop-blur",
-            template.share_enabled ? "bg-white/85 text-emerald-600" : "bg-white/85 text-muted"
-          )}
-        >
-          <span
-            className={cn(
-              "h-1.5 w-1.5 rounded-full",
-              template.share_enabled ? "bg-emerald-500" : "bg-gray-300"
-            )}
-          />
-          {template.share_enabled ? "Shared" : "Private"}
-        </span>
+        {template.type && template.type !== "Other" && (
+          <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2 py-1 text-[10px] font-semibold text-midnight backdrop-blur">
+            {template.type}
+          </span>
+        )}
       </button>
 
       <div className="flex flex-1 flex-col p-4">
@@ -110,26 +91,26 @@ export function TemplateCard({
           </span>
           <span className="h-1 w-1 rounded-full bg-gray-300" />
           <span>{formatBytes(template.size_bytes)}</span>
-          {template.category && template.category !== "Uncategorized" && (
+          {template.project && template.project !== "Unsorted" && (
             <>
               <span className="h-1 w-1 rounded-full bg-gray-300" />
-              <span className="truncate">{template.category}</span>
+              <span className="truncate">{template.project}</span>
             </>
           )}
         </div>
 
         <div className="mt-4 flex items-center gap-2">
           <button
-            onClick={copyLink}
+            onClick={copyDefault}
             className="interactive flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-sky px-3 py-2 text-xs font-semibold text-white hover:bg-sky-600"
           >
             🔗 Copy link
           </button>
           <button
-            onClick={openPreview}
+            onClick={() => onManageLinks(template)}
             className="interactive rounded-xl border border-line px-3 py-2 text-xs font-semibold text-midnight hover:bg-ice"
           >
-            Open
+            📊 Links
           </button>
           <div className="relative">
             <button
@@ -144,17 +125,17 @@ export function TemplateCard({
             </button>
             {menu && (
               <div
-                className="anim-fade-in absolute bottom-full right-0 z-20 mb-2 w-52 overflow-hidden rounded-xl border border-line bg-white py-1 shadow-lift"
+                className="anim-fade-in absolute bottom-full right-0 z-20 mb-2 w-48 overflow-hidden rounded-xl border border-line bg-white py-1 shadow-lift"
                 onClick={(e) => e.stopPropagation()}
               >
+                <MenuItem onClick={() => { setMenu(false); onManageLinks(template); }}>
+                  Links & stats
+                </MenuItem>
                 <MenuItem onClick={() => { setMenu(false); onEdit(template); }}>
                   Edit details
                 </MenuItem>
-                <MenuItem onClick={() => { setMenu(false); onToggleShare(template); }}>
-                  {template.share_enabled ? "Disable sharing" : "Enable sharing"}
-                </MenuItem>
-                <MenuItem onClick={() => { setMenu(false); onRotate(template); }}>
-                  Generate new link
+                <MenuItem onClick={() => { setMenu(false); openPreview(); }}>
+                  Open preview
                 </MenuItem>
                 <div className="my-1 h-px bg-line" />
                 <MenuItem danger onClick={() => { setMenu(false); onDelete(template); }}>

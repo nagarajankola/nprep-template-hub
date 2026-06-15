@@ -6,6 +6,7 @@ import { Button } from "./ui/Button";
 import { Field, inputCls } from "./ui/Field";
 import { useToast } from "./ui/Toaster";
 import { cn } from "@/lib/format";
+import { TEMPLATE_TYPES } from "@/lib/taxonomy";
 import type { TemplateMeta } from "@/lib/types";
 
 function extractTitle(html: string): string {
@@ -22,10 +23,12 @@ export function UploadModal({
   open,
   onClose,
   onCreated,
+  projects,
 }: {
   open: boolean;
   onClose: () => void;
   onCreated: (t: TemplateMeta) => void;
+  projects: string[];
 }) {
   const toast = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -33,7 +36,8 @@ export function UploadModal({
   const [html, setHtml] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState("Other");
+  const [project, setProject] = useState("");
   const [tags, setTags] = useState("");
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -43,7 +47,8 @@ export function UploadModal({
     setHtml("");
     setName("");
     setDescription("");
-    setCategory("");
+    setType("Other");
+    setProject("");
     setTags("");
     setBusy(false);
   }
@@ -73,7 +78,7 @@ export function UploadModal({
       const res = await fetch("/api/templates", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, description, category, tags, html }),
+        body: JSON.stringify({ name, description, type, project, tags, html }),
       });
       const d = (await res.json().catch(() => ({}))) as {
         template?: TemplateMeta;
@@ -101,9 +106,7 @@ export function UploadModal({
           ✕
         </button>
       </div>
-      <p className="mt-1 text-sm text-muted">
-        Upload a self-contained HTML prototype.
-      </p>
+      <p className="mt-1 text-sm text-muted">Upload a self-contained HTML prototype.</p>
 
       <div
         onDragOver={(e) => {
@@ -163,23 +166,42 @@ export function UploadModal({
           />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Category">
-            <input
+          <Field label="Type">
+            <select
               className={inputCls}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Onboarding"
-            />
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              {TEMPLATE_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
           </Field>
-          <Field label="Tags (comma-separated)">
+          <Field label="Project">
             <input
               className={inputCls}
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="mobile, hindi"
+              value={project}
+              onChange={(e) => setProject(e.target.value)}
+              list="upload-projects"
+              placeholder="Unsorted"
             />
+            <datalist id="upload-projects">
+              {projects.map((p) => (
+                <option key={p} value={p} />
+              ))}
+            </datalist>
           </Field>
         </div>
+        <Field label="Tags (comma-separated)">
+          <input
+            className={inputCls}
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="mobile, hindi"
+          />
+        </Field>
       </div>
 
       <div className="mt-5 flex justify-end gap-2">

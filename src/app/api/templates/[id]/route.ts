@@ -18,6 +18,8 @@ export async function PATCH(
   if (typeof body.name === "string") patch.name = body.name.trim() || "Untitled template";
   if (typeof body.description === "string") patch.description = body.description.trim();
   if (typeof body.category === "string") patch.category = body.category.trim() || "Uncategorized";
+  if (typeof body.type === "string") patch.type = body.type.trim() || "Other";
+  if (typeof body.project === "string") patch.project = body.project.trim() || "Unsorted";
   if (body.tags !== undefined) patch.tags = parseTags(body.tags);
   if (typeof body.share_enabled === "boolean") patch.share_enabled = body.share_enabled;
 
