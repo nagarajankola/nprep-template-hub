@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PreviewFrame } from "./PreviewFrame";
 
 /**
@@ -18,8 +18,18 @@ export function CardPreview({
 }) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const thumbUrl = thumbBase ? `${thumbBase}/${id}.jpg` : null;
+
+  useEffect(() => {
+    // A cached image can finish loading before React attaches onLoad — detect it.
+    const img = imgRef.current;
+    if (img && img.complete) {
+      if (img.naturalWidth > 0) setLoaded(true);
+      else setFailed(true);
+    }
+  }, [thumbUrl]);
 
   if (!thumbUrl || failed) {
     return <PreviewFrame id={id} title={title} />;
@@ -33,6 +43,7 @@ export function CardPreview({
       {!loaded && <div className="skeleton absolute inset-0" />}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={imgRef}
         src={thumbUrl}
         alt={title}
         loading="lazy"
