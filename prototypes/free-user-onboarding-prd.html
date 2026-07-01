@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NPrep — Free User Onboarding · PRD</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --midnight:#131B63; --sky:#15CAE8; --ice:#E5F0F8; --grayLight:#F0F2F5;
+    --green:#2EAF6A; --greenBg:#E6F9F0; --gold:#E8962E; --goldBg:#FFF5E6;
+    --red:#E84B4B; --redBg:#FEF0F0; --ink:#2A3142; --muted:#6B7280; --line:#E5E7EE;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#EEF1F6;color:var(--ink);font-family:'Poppins',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;padding-bottom:80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+  /* ── HERO ── */
+  header.hero{background:linear-gradient(135deg,#131B63 0%,#1E2875 55%,#15CAE8 220%);color:#fff;padding:44px 0 40px;position:relative;overflow:hidden}
+  header.hero::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(21,202,232,.35),transparent 70%);top:-110px;right:-60px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9FE8F5}
+  h1{font-size:32px;font-weight:800;letter-spacing:-.6px;margin-top:8px;line-height:1.12}
+
+  /* ── SECTION ── */
+  section{margin-top:38px;scroll-margin-top:18px}
+  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:16px;position:sticky;top:0;z-index:20;background:#EEF1F6;padding:12px 0}
+  .sec-num{min-width:30px;height:30px;border-radius:9px;background:var(--midnight);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;padding:0 7px}
+  h2{font-size:20px;font-weight:800;color:var(--midnight);letter-spacing:-.3px}
+  h3{font-size:14.5px;font-weight:700;color:var(--midnight);margin:20px 0 9px;display:flex;align-items:center;gap:8px}
+  h4{font-size:12.5px;font-weight:700;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px;color:#7A4F9E}
+  p.lead{font-size:13.5px;color:var(--muted);margin-bottom:6px}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:0 8px 26px rgba(19,27,99,.05)}
+  .card + .card{margin-top:14px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:780px){.split{grid-template-columns:1fr}}
+
+  /* ── TABLES ── */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+  th{background:var(--ice);color:var(--midnight);text-align:left;padding:10px 12px;font-weight:700;font-size:11px;letter-spacing:.4px;text-transform:uppercase;border-bottom:2px solid #D3E3F0}
+  td{padding:11px 12px;border-bottom:1px solid #EEF1F6;vertical-align:top;color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  td b,td strong{color:var(--midnight)}
+  .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;background:#F4F6FA;border:1px solid #E6EAF1;border-radius:5px;padding:1px 6px;color:#3B2A8C;white-space:nowrap}
+  .ok{color:var(--green);font-weight:700}.nope{color:var(--red);font-weight:700}
+
+  /* ── STEP FLOW ── */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin-top:10px}
+  .step{flex:1;min-width:130px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 13px;position:relative}
+  .step .sn{font-size:9.5px;font-weight:800;letter-spacing:.6px;color:var(--sky);text-transform:uppercase}
+  .step .st{font-size:12.5px;font-weight:700;color:var(--midnight);margin-top:3px;line-height:1.25}
+  .step .sd{font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+  .step.gate{border-color:#F2C879;background:#FFFBF2}
+  .step.auth{border-color:#9FD9F0;background:#F5FCFE}
+  .step.content{border-color:#B6C2F0;background:#F6F8FF}
+  .arrow{align-self:center;color:#C2C7D2;font-size:18px;flex:0 0 auto}
+
+  /* ── CALLOUTS ── */
+  .note{border-radius:12px;padding:12px 15px;font-size:12.5px;line-height:1.55;margin-top:12px;border:1px solid;display:flex;gap:9px;align-items:flex-start}
+  .note .ic{flex-shrink:0}
+  .note b{font-weight:700}
+  .note.info{background:var(--ice);border-color:#C7DEF0;color:#1B3A66}
+  .note.info b{color:var(--midnight)}
+  .note.warn{background:var(--goldBg);border-color:#F2D49A;color:#7A5212}
+  .note.warn b{color:#5E3D08}
+  .note.q{background:#F3F0FF;border-color:#D7CDF5;color:#3F2E84}
+  .note.q b{color:#2E1F6E}
+  .note.ok{background:var(--greenBg);border-color:#BFE9CC;color:#1A6B43}
+  .note.ok b{color:#0F5732}
+
+  .tag{display:inline-block;font-size:10px;font-weight:700;border-radius:6px;padding:2px 8px;letter-spacing:.3px;vertical-align:middle;white-space:nowrap}
+  .tag-known{background:#EDE9FF;color:#5B3FD1}
+  .tag-unknown{background:#E5F0F8;color:#1E6FAF}
+  .tag-both{background:var(--greenBg);color:#1A7B45}
+  .tag-tc{background:#E4F1FF;color:#0A6FD6}
+  .tag-defer{background:var(--goldBg);color:#9A6212}
+  .tag-block{background:var(--redBg);color:#A82F2F}
+
+  ul.clean{list-style:none;margin-top:6px}
+  ul.clean li{position:relative;padding-left:20px;font-size:12.5px;margin-bottom:7px;line-height:1.5}
+  ul.clean li::before{content:'';position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--sky)}
+  ul.clean li b{color:var(--midnight)}
+  ul.clean ul{margin-top:6px}
+  ul.clean ul li::before{background:#C2C7D2;width:5px;height:5px;top:8px}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:4px;display:inline-block}
+
+  .toc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-top:26px}
+  .toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 18px;margin-top:8px}
+  .toc a{font-size:12.5px;color:var(--midnight);text-decoration:none;font-weight:500;display:block;padding:4px 0}
+  .toc a:hover{color:var(--sky)}
+  .toc a span{color:var(--sky);font-weight:800;margin-right:7px}
+
+  .last-updated{position:fixed;bottom:14px;right:14px;background:rgba(19,27,99,.92);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.3px;border-radius:100px;padding:7px 14px;box-shadow:0 6px 20px rgba(19,27,99,.3);z-index:99;backdrop-filter:blur(6px)}
+
+  .fade{opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}
+  .fade.in{opacity:1;transform:none}
+
+  @media(max-width:640px){ h1{font-size:25px} .flow .arrow{display:none} .step{min-width:100%} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">NPrep · Product Requirements — Logic Spec</div>
+    <h1>Free User Onboarding</h1>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888">On this page</div>
+    <div class="toc-grid">
+      <a href="#scope"><span>1</span>Scope &amp; definitions</a>
+      <a href="#intent"><span>2</span>Intent detection &amp; routing</a>
+      <a href="#auth"><span>3</span>Authentication</a>
+      <a href="#unknown"><span>4</span>Flow A — Unknown intent</a>
+      <a href="#known"><span>5</span>Flow B — Known intent</a>
+      <a href="#deferred"><span>6</span>Profile data collection</a>
+      <a href="#existing"><span>7</span>Existing / returning users</a>
+      <a href="#resume"><span>8</span>Drop-off &amp; resume</a>
+      <a href="#data"><span>9</span>Data model &amp; source tags</a>
+      <a href="#metrics"><span>10</span>Success metrics</a>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:13px;border-left:4px solid var(--sky)">
+    <div style="font-size:20px">🔗</div>
+    <div style="font-size:13px"><b style="color:var(--midnight)">Live prototype</b> — clickable reference for the flows in this spec: <a href="https://nprep-signup.vercel.app/" target="_blank" style="color:#1E6FAF;font-weight:600">nprep-signup.vercel.app</a></div>
+  </div>
+
+  <!-- 1 ───────────────────────── -->
+  <section id="scope" class="fade">
+    <div class="sec-head"><div class="sec-num">1</div><h2>Scope &amp; definitions</h2></div>
+    <div class="card">
+      <h3 style="margin-top:0">What this covers</h3>
+      <ul class="clean">
+        <li><b>In scope:</b> install / first launch → splash → authentication → the two intent branches → deferred profile collection → handoff onto the home page.</li>
+        <li><b>Out of scope:</b> any post-onboarding product surface, the username/profile system, paid conversion / payment, and the personalised 3-day study plan (separate spec).</li>
+      </ul>
+
+      <h3>Key terms</h3>
+      <table>
+        <tr><th style="width:160px">Term</th><th>Definition</th></tr>
+        <tr><td><span class="tag tag-known">Known intent</span></td><td>User arrived pointed at a <b>specific piece of content</b> (a lecture / test) via a deep link or content-specific campaign. We take them straight to it.</td></tr>
+        <tr><td><span class="tag tag-unknown">Unknown intent</span></td><td>User arrived with <b>no specific content target</b> (organic install, direct open). They run the generic value-prop + first-lesson taste flow.</td></tr>
+        <tr><td><span class="tag tag-tc">Truecaller login</span></td><td>One-tap auth returning a <b>verified name + phone</b>. When available, it replaces manual entry <b>and OTP</b>.</td></tr>
+        <tr><td><span class="tag tag-defer">Deferred prompt</span></td><td>A profile question <b>not asked during onboarding</b> — it surfaces later as a contextual prompt on the home page (e.g. <span class="mono">grade</span>).</td></tr>
+        <tr><td><b>Handoff</b></td><td>The moment the user lands on the home page. End of this spec's scope.</td></tr>
+      </table>
+      <div class="legend">
+        <span><span class="dot" style="background:#9FD9F0"></span>Auth step</span>
+        <span><span class="dot" style="background:#B6C2F0"></span>Content step</span>
+        <span><span class="dot" style="background:#F2C879"></span>Deferred / blocking gate</span>
+        <span><span class="dot" style="background:#E5E7EE"></span>Standard screen</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 ───────────────────────── -->
+  <section id="intent" class="fade">
+    <div class="sec-head"><div class="sec-num">2</div><h2>Intent detection &amp; routing</h2></div>
+    <div class="card">
+      <p class="lead">Evaluated <b>once</b>, on first launch, before the first screen after splash renders. It decides the entire downstream branch.</p>
+      <div class="note info"><span class="ic">✅</span><div><b>Rule —</b> a user is <span class="tag tag-known">Known intent</span> if <b>EITHER</b>:
+        <ul class="clean" style="margin-top:8px">
+          <li>the launch carries a <b>deep link with a resolvable <span class="mono">content_id</span></b> (WhatsApp / share / ad link to a specific lecture or test), <b>OR</b></li>
+          <li>the install/launch carries a <b>content-specific campaign tag</b> that maps to a content item.</li>
+        </ul>
+        Otherwise → <span class="tag tag-unknown">Unknown intent</span> (organic / direct open).</div>
+      </div>
+      <h3>Resolution order</h3>
+      <table>
+        <tr><th style="width:38%">Order</th><th>Behaviour</th></tr>
+        <tr><td>1 · Deep-link <span class="mono">content_id</span></td><td>Known. Resolve content → load preview card (#5). Wins over campaign if both present.</td></tr>
+        <tr><td>2 · Campaign tag → content</td><td>Known. Resolve campaign → content mapping.</td></tr>
+        <tr><td>3 · Neither</td><td>Unknown → Flow A (#4).</td></tr>
+      </table>
+      <div class="note warn"><span class="ic">⚠️</span><div><b>Dangling content:</b> if a deep link / campaign references content that no longer exists or fails to resolve, <b>fall back to Unknown intent</b>. Never block on a broken link.</div></div>
+
+      <h3>Edge cases</h3>
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Both deep link AND campaign present</td><td>Deep-link <span class="mono">content_id</span> wins (more specific). Still Known.</td></tr>
+        <tr><td>Deep link to paywalled content (free user)</td><td>Verify first, then GO PRO intercept at content open (#5).</td></tr>
+        <tr><td>Existing user opens a Known deep link</td><td>Auth resolves to login (#7) → straight into content; onboarding skipped.</td></tr>
+        <tr><td>Attribution SDK slow/unavailable</td><td>Don't block splash; if no <span class="mono">content_id</span> deep link, default to Unknown.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3 ───────────────────────── -->
+  <section id="auth" class="fade">
+    <div class="sec-head"><div class="sec-num">3</div><h2>Authentication</h2></div>
+    <p class="lead" style="margin-bottom:12px">Phone is the identity key for both branches. <b>Truecaller, when available, is sufficient on its own — no OTP.</b></p>
+
+    <div class="split">
+      <div class="card">
+        <h3 style="margin-top:0"><span class="tag tag-tc">Path A</span> Truecaller — instant verify</h3>
+        <div class="note ok" style="margin-top:8px"><span class="ic">✅</span><div><b>No OTP.</b> A successful Truecaller verification authenticates immediately — the OTP screen is never shown on this path.</div></div>
+        <ul class="clean">
+          <li>Returns <span class="mono">phone</span> + <span class="mono">name</span> in one tap.</li>
+          <li>Both persisted with <span class="mono">phone_source = truecaller</span> and <span class="mono">name_source = truecaller</span>.</li>
+        </ul>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>Mandatory tagging.</b> The <span class="mono">truecaller</span> tags are load-bearing — they tell #6 the name is already captured (so the name step is skipped) and feed analytics.</div></div>
+        <h4>Edge cases</h4>
+        <table>
+          <tr><th>Scenario</th><th>Behaviour</th></tr>
+          <tr><td>Not installed / declined / sheet dismissed</td><td>Fall through to Path B.</td></tr>
+          <tr><td>Token fails server validation</td><td>Silently fall back to Path B.</td></tr>
+          <tr><td>TC name blank</td><td>Keep verified phone; treat name missing → name captured per #6.</td></tr>
+          <tr><td>TC number is an existing account</td><td>Treated as login (#7).</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0"><span class="tag" style="background:#EEF1F6;color:#555">Path B</span> Manual number + OTP</h3>
+        <div class="note info" style="margin-top:8px"><span class="ic">✅</span><div><b>4-digit OTP.</b> SMS auto-read where the OS permits; otherwise manual entry. <span class="mono">phone_source = manual</span>.</div></div>
+        <ul class="clean">
+          <li><span class="mono">+91</span> default; once 10 valid digits are present, "Get OTP" auto-fires (details below).</li>
+          <li><b>Name (manual):</b> collected at the number-entry step for <span class="tag tag-unknown">Unknown</span>; <b>collected after OTP</b> for <span class="tag tag-known">Known</span> (#6).</li>
+        </ul>
+        <h4>Edge cases</h4>
+        <table>
+          <tr><th>Scenario</th><th>Behaviour</th></tr>
+          <tr><td>OTP never arrives</td><td>WhatsApp → resend → edit number.</td></tr>
+          <tr><td>Wrong OTP repeatedly</td><td>Inline error; rate-limit / backoff.</td></tr>
+          <tr><td>Number is existing account</td><td>Verifies → login (#7).</td></tr>
+          <tr><td>Drop mid-OTP (not verified)</td><td>No account → next launch restarts (#8).</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Phone number entry — detailed behaviour</h3>
+      <ul class="clean">
+        <li><b>Keyboard auto-opens</b> on landing — the field is auto-focused; the user can type immediately.</li>
+        <li><b>Paste / autofill normalisation</b> — whatever format the number arrives in, only the clean 10 digits are kept:
+          <ul>
+            <li>Pasted <span class="mono">+91XXXXXXXXXX</span> → strip <span class="mono">+91</span> (shown as a fixed <span class="mono">+91</span> prefix + 10 digits).</li>
+            <li>Pasted <span class="mono">0XXXXXXXXXX</span> → strip the leading <span class="mono">0</span>, keep 10 digits.</li>
+            <li>Spaces, dashes and brackets stripped; only the final 10 digits remain.</li>
+          </ul>
+        </li>
+        <li><b>Auto-submit:</b> on a <b>fresh, from-scratch</b> 10-digit entry, "Get OTP" fires automatically → OTP screen. If the user edits a returned / pre-filled number, Get OTP is tapped manually (no auto-fire).</li>
+        <li><b>Clear / edit:</b> an <b>X</b> on the right of the number bar clears the whole field; tapping anywhere in the number edits it inline.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">OTP verification — detailed behaviour</h3>
+      <div class="note info" style="margin-top:0"><span class="ic">✅</span><div><b>4-digit OTP.</b> <b>Android:</b> request SMS auto-read on landing — <b>asked once</b>; if denied, never asked again → manual. <b>iOS:</b> no SMS auto-read (not possible) — manual entry; the OS keyboard may suggest the OTP.</div></div>
+      <table>
+        <tr><th style="width:32%">State</th><th>Behaviour</th></tr>
+        <tr><td>Android · permission allowed</td><td>OTP auto-read → <b>Verify auto-clicked</b> → next screen.</td></tr>
+        <tr><td>Manual (iOS, or Android denied)</td><td>On a <b>fresh, full 4-digit</b> entry, Verify is auto-clicked.</td></tr>
+        <tr><td>No OTP after <b>30s</b></td><td>Resend appears — <b>OTP via SMS</b> or <b>OTP on WhatsApp</b> (tap to switch). On Android with permission, the resent OTP auto-reads too.</td></tr>
+        <tr><td>Invalid OTP</td><td><b>Red error state.</b> The user can tap any single digit box and fix just that digit. After a single-digit edit, Verify is <b>not</b> auto-clicked — the user taps Verify (auto-click only on a fresh full entry).</td></tr>
+        <tr><td>Edit number</td><td>"Edit" returns to the phone screen with the number <b>pre-filled</b> (X to clear, or tap to edit inline).</td></tr>
+        <tr><td>On success</td><td>A brief success <b>toast</b> → name step (Known) / subject (Unknown).</td></tr>
+      </table>
+    </div>
+
+    <div class="note q"><span class="ic">🔑</span><div><b>Identity = phone.</b> The account is keyed on the verified number. A user is "existing" the moment a verified phone matches a prior record (#7).</div></div>
+  </section>
+
+  <!-- 4 ───────────────────────── -->
+  <section id="unknown" class="fade">
+    <div class="sec-head"><div class="sec-num">4</div><h2>Flow A — Unknown intent <span class="tag tag-unknown" style="font-size:11px">organic / direct</span></h2></div>
+    <div class="card">
+      <p class="lead">The generic "let's start studying" flow. This is the <b>only</b> flow with the value banners, the subject screen, and the first-lesson video + quiz taste.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">Splash</div><div class="st">Brand splash</div><div class="sd">Auto-advances (1.5s); tap to skip.</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="sn">Value</div><div class="st">3 value banners</div><div class="sd">3 slides · 1.5s each.</div></div>
+        <div class="arrow">→</div>
+        <div class="step auth"><div class="sn">Auth</div><div class="st">Phone + verify</div><div class="sd">Truecaller instant, or manual → OTP.</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="sn">Profile</div><div class="st">Subject (single select)</div><div class="sd">Single select; optional.</div></div>
+        <div class="arrow">→</div>
+        <div class="step content"><div class="sn">Taste</div><div class="st">Lesson + quiz</div><div class="sd">Video + 3 checkpoints.</div></div>
+        <div class="arrow">→</div>
+        <div class="step content"><div class="sn">Score</div><div class="st">Score screen</div><div class="sd">Positive at any score.</div></div>
+        <div class="arrow">→</div>
+        <div class="step gate"><div class="sn">Handoff</div><div class="st">Home page</div><div class="sd">Grade asked later (#6).</div></div>
+      </div>
+
+      <div class="note info"><span class="ic">📲</span><div><b>Splash → phone.</b> After splash the user moves to the value banners, which <b>auto-scroll (1.5s per slide)</b>. The phone step (Truecaller) is invoked in <b>two ways</b>: (1) automatically when the 3rd slide finishes (<b>Get started auto-fires</b>), or (2) immediately when the user taps <b>Get started</b> to skip ahead.</div></div>
+
+      <h3>Screen behaviour</h3>
+      <table>
+        <tr><th style="width:22%">Screen</th><th>Rules</th></tr>
+        <tr><td><b>Splash</b></td><td>Interactive / animated. Auto-advances after <b>1.5s</b>; a tap advances immediately. Resolves session + intent + prefetch in parallel.</td></tr>
+        <tr><td><b>Value banners</b></td><td>Exactly 3, static (not CMS in v1): syllabus, video teaching + linked practice, job board. Each slide <b>auto-scrolls after 1.5s</b>; after the 3rd, <b>Get started auto-fires</b> → phone step. Tapping <b>Get started</b> anytime skips ahead.</td></tr>
+        <tr><td><b>Subject</b></td><td>Inline <b>single-select</b> with social proof. <b>Optional</b> — can be skipped (it's part of onboarding, never a blocker). Saved to profile if chosen.</td></tr>
+        <tr><td><b>Name</b></td><td>Truecaller → already have it. Manual → collected at the number-entry step (Unknown has no content to rush into). See #6.</td></tr>
+        <tr><td><b>Lesson + quiz</b></td><td>Unlock intro → interactive video with <b>3 in-video checkpoints / 3 questions</b>. Correctness-gated — see mechanics below. On finish → score screen.</td></tr>
+        <tr><td><b>Score</b></td><td>Affirmation always positive (variants by score); on continue the user lands on the home page.</td></tr>
+      </table>
+
+      <div class="note info"><span class="ic">📊</span><div><b>Social-proof numbers —</b> any student-count shown (e.g. on the subject screen) is a <b>server-driven constant</b>: the same fixed value for every user for a given data point (never randomised per session). Values sit in the <b>1.1K–1.4K</b> band.</div></div>
+
+      <h3>Edge cases</h3>
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Subject: none selected</td><td>Allowed — user can skip; Continue is always enabled.</td></tr>
+        <tr><td>Video fails to load</td><td>Take the user to the home page.</td></tr>
+        <tr><td>Exit mid-lesson</td><td>Post-verify position (#8) → resume to home page; taste not forced again.</td></tr>
+        <tr><td>Network drop during quiz</td><td>Buffer answers; submit on reconnect.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Interactive lesson — checkpoint mechanics</h3>
+      <div class="note info" style="margin-top:0"><span class="ic">🎬</span><div><b>Attempt-anytime, checkpoint-gated.</b> The video carries <b>3 checkpoints</b> tied to <b>3 questions</b>. Questions are attemptable throughout; the video only pauses if a checkpoint is reached unanswered.</div></div>
+      <ul class="clean">
+        <li><b>Landing state:</b> the "answer 3 questions" bar is highlighted (animated) and the video is highlighted. The <b>video auto-starts</b>. Questions are visible and <b>attemptable throughout</b> — not locked.</li>
+        <li><b>While playing:</b> the user can answer the current question at any time; submitting lets the video keep playing. Not answering is <b>not</b> treated as "not attempted".</li>
+        <li><b>At a checkpoint:</b> if that segment's question hasn't been answered correctly yet, the video <b>pauses</b> there until it is.</li>
+        <li><b>Correct answer</b> → video continues to the next segment / checkpoint.</li>
+        <li><b>Wrong answer</b> → re-attempt allowed (no limit); at a checkpoint the video stays paused until the answer is correct.</li>
+        <li><b>All 3 correct</b> → the next screen unlocks.</li>
+        <li><b>Score</b> = number correct on the <b>first attempt</b> (0–3); this is what the score screen reflects, so its variants stay meaningful even though finishing requires all 3 eventually correct.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5 ───────────────────────── -->
+  <section id="known" class="fade">
+    <div class="sec-head"><div class="sec-num">5</div><h2>Flow B — Known intent <span class="tag tag-known" style="font-size:11px">deep link / campaign</span></h2></div>
+    <div class="card">
+      <p class="lead">The "you came for X — here it is" flow. Goal: get them into the content with the least friction, defer everything else.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">Splash</div><div class="st">Brand splash</div><div class="sd">No value banners.</div></div>
+        <div class="arrow">→</div>
+        <div class="step content"><div class="sn">Preview</div><div class="st">Content preview + phone</div><div class="sd">"Save your spot in this lesson."</div></div>
+        <div class="arrow">→</div>
+        <div class="step auth"><div class="sn">Auth</div><div class="st">Verify (OTP)</div><div class="sd">Truecaller instant, or manual → OTP.</div></div>
+        <div class="arrow">→</div>
+        <div class="step gate"><div class="sn">Name</div><div class="st">Ask name</div><div class="sd">After OTP. Skipped if Truecaller already gave it.</div></div>
+        <div class="arrow">→</div>
+        <div class="step content"><div class="sn">Payoff</div><div class="st">The content they came for</div><div class="sd">No subjects, no taste quiz.</div></div>
+        <div class="arrow">→</div>
+        <div class="step gate"><div class="sn">Handoff</div><div class="st">Home page</div><div class="sd">First-reward popup; grade on interaction (#6).</div></div>
+      </div>
+
+      <div class="note ok"><span class="ic">✅</span><div><b>Flow order:</b> phone → OTP → <b>name</b> → the content they came for. Known-intent users <b>never</b> see the subject screen or the generic video+quiz; their subject is <b>inferred</b> from the content they came for.</div></div>
+
+      <h3>How the screens behave</h3>
+      <table>
+        <tr><th style="width:24%">Screen</th><th>Rules</th></tr>
+        <tr><td><b>Content preview + save</b></td><td>Shows the resolved <span class="mono">content_id</span> (title, teacher, type). Capture here = <b>phone only</b>. Truecaller offered first; else manual + OTP.</td></tr>
+        <tr><td><b>Name</b></td><td>Asked <b>right after OTP</b>, before the content. <b>Not skippable</b> — no skip button. Skipped entirely only when Truecaller already supplied the name.</td></tr>
+        <tr><td><b>The content</b></td><td>Deep-linked item opens directly in the standard player. Entry subject inferred from the content + seeded onto the profile.</td></tr>
+        <tr><td><b>Grade</b></td><td>Deferred — asked when they enter a feature that needs grade to personalise (#6).</td></tr>
+        <tr><td><b>Home-page return</b></td><td>When the user returns from the content to the home page, a <b>first-reward popup</b> appears — a glance / teaser of the reward. <b>Full reward spec TBD.</b></td></tr>
+      </table>
+
+      <h3>Edge cases</h3>
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Content metadata fails to load</td><td>Generic "save your spot" card without preview; proceed. If content itself unresolvable → fall back to Unknown (#2).</td></tr>
+        <tr><td>App closed at the name step (after OTP, before content)</td><td>Name still pending → next launch the name is asked again. The content is restored <b>only</b> if reopened via the same deep link; a cold open goes to the home page (#8).</td></tr>
+        <tr><td>Deep-linked content is paywalled (free user)</td><td>Verify → name → on content open the GO PRO intercept is shown instead of the content.</td></tr>
+        <tr><td>Content is a multi-item test/series</td><td>"Content block" = the deep-linked item only.</td></tr>
+        <tr><td>Number belongs to existing user</td><td>Login (#7) → straight into content; onboarding skipped.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6 ───────────────────────── -->
+  <section id="deferred" class="fade">
+    <div class="sec-head"><div class="sec-num">6</div><h2>Profile data collection</h2></div>
+    <p class="lead" style="margin-bottom:12px">Name is captured inline at a defined low-friction point. <b>Grade is the only deferred question</b> — never asked during onboarding; it pops when the user enters a feature that needs grade to personalise.</p>
+    <div class="split">
+      <div class="card">
+        <h3 style="margin-top:0">Name <span class="tag tag-tc">inline</span></h3>
+        <div class="note info" style="margin-top:8px"><span class="ic">✅</span><div><b>If Truecaller supplied it, never ask.</b> Otherwise capture at the defined point per branch.</div></div>
+        <table>
+          <tr><th style="width:30%">Source / intent</th><th>When captured</th></tr>
+          <tr><td>Truecaller (either)</td><td>Already have it. Never asked.</td></tr>
+          <tr><td>Manual · <span class="tag tag-unknown">Unknown</span></td><td>At the number-entry step (#3).</td></tr>
+          <tr><td>Manual · <span class="tag tag-known">Known</span></td><td>Right <b>after OTP</b>, before the content (#5).</td></tr>
+        </table>
+        <h4>Input rules</h4>
+        <ul class="clean">
+          <li><b>Letters only</b> — any script (<b>Unicode letters</b>, incl. Hindi / regional), plus spaces and <span class="mono">. ' -</span>; no emoji, numbers or other symbols; no leading space.</li>
+          <li><b>Auto-capitalise</b> the first letter of each word by default. This is a <b>soft default</b> — if the user manually changes a letter to lower/upper case, their choice is kept.</li>
+          <li><b>Length:</b> min <b>2</b>, max <b>35</b> characters.</li>
+        </ul>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>Not skippable.</b> If the user closes the app before entering it, the name is asked again the next time they open the app (#8).</div></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Grade <span class="tag tag-block">deferred / blocking</span></h3>
+        <div class="note info" style="margin-top:8px"><span class="ic">✅</span><div><b>Always deferred</b>, both flows. Never an onboarding screen.</div></div>
+        <ul class="clean">
+          <li><b>Grade</b> = program → year.</li>
+          <li><b>Trigger:</b> the user enters a feature that needs the grade data point to personalise (e.g. QBank, Tests). <b>Exact feature set decided by engineering.</b></li>
+          <li><b>Behaviour:</b> <span class="tag tag-block">Blocking</span> — must answer to enter that feature. Asked once; then never again.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Edge cases</h3>
+    <div class="card">
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Grade prompt dismissed / backed out</td><td>Blocking — the feature does not open. Re-prompt on the next attempt.</td></tr>
+        <tr><td>Name closed before entry</td><td>Re-asked next launch (not skippable).</td></tr>
+        <tr><td>Truecaller name blank</td><td>Treated as missing → captured per the branch rule.</td></tr>
+        <tr><td>Existing user missing grade</td><td>Same grade gate applies after login (#7).</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7 ───────────────────────── -->
+  <section id="existing" class="fade">
+    <div class="sec-head"><div class="sec-num">7</div><h2>Existing / returning users</h2></div>
+    <div class="card">
+      <div class="note ok" style="margin-top:0"><span class="ic">✅</span><div><b>Match = login.</b> On verify (Truecaller or OTP), if the phone matches an existing account → log straight in → home page. A live session at launch bypasses auth entirely.</div></div>
+      <ul class="clean">
+        <li>Missing <span class="mono">name</span> → name asked (#6); missing <span class="mono">grade</span> → grade gate when entering a feature that needs it.</li>
+        <li><b>Existing users still pass through the value banners</b> — because the phone step comes after the banners — but they <b>skip the subject screen and the taste quiz</b>.</li>
+        <li>Existing user via a Known deep link → straight into the deep-linked content after login.</li>
+      </ul>
+      <h3>Edge cases</h3>
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Existing user, full profile</td><td>Home page, no prompts (Known link → straight to content).</td></tr>
+        <tr><td>Existing user, missing name + grade</td><td>Home page → name asked → grade when entering a feature that needs it.</td></tr>
+        <tr><td>Same phone, new device</td><td>Verify → matches → restore profile; no re-onboarding.</td></tr>
+        <tr><td>Account from incomplete onboarding</td><td>Handled by resume rules (#8).</td></tr>
+        <tr><td>Session expired</td><td>Re-verify (#3) → match → login.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8 ───────────────────────── -->
+  <section id="resume" class="fade">
+    <div class="sec-head"><div class="sec-num">8</div><h2>Drop-off &amp; resume logic</h2></div>
+    <div class="card">
+      <p class="lead">The dividing line is <b>phone verification</b>. Before it, no account → restart. After it, the user is recoverable.</p>
+      <table>
+        <tr><th style="width:30%">Where they dropped</th><th style="width:26%">Account state</th><th>Next launch</th></tr>
+        <tr><td><b>Before verification</b><br>(splash, banners, phone, mid-OTP)</td><td>No verified phone → <b>no account</b></td><td><span class="tag tag-block">Restart</span> from the top of the flow; re-evaluate intent (#2).</td></tr>
+        <tr><td><b>After verify, name pending</b></td><td>Account (phone); name missing</td><td><span class="tag tag-both">Auto-login</span> → name asked again → then home page; grade on interaction.</td></tr>
+        <tr><td><b>Name done, profile incomplete</b></td><td>Account + name</td><td><span class="tag tag-both">Auto-login</span> → home page; grade on interaction. Any unfinished Unknown steps (subject, taste) are <b>not</b> resumed.</td></tr>
+        <tr><td><b>Fully onboarded</b></td><td>Complete</td><td>Auto-login → home page, no prompts.</td></tr>
+      </table>
+      <div class="note info"><span class="ic">🧭</span><div>An <span class="mono">onboarding_state</span> field (<span class="mono">verified</span> → <span class="mono">named</span> → <span class="mono">complete</span>) is the source of truth for resume routing.</div></div>
+
+      <h3>Edge cases</h3>
+      <table>
+        <tr><th style="width:42%">Scenario</th><th>Behaviour</th></tr>
+        <tr><td>Drop pre-OTP, returns days later</td><td>No account → fresh start; intent re-evaluated (a new deep link could change the branch).</td></tr>
+        <tr><td>Drop post-verify on Known, returns via the <b>same deep link</b></td><td>Auto-login → name (if pending) → restore the content they came for.</td></tr>
+        <tr><td>Drop post-verify on Known, cold open or different link</td><td>Auto-login → name (if pending) → home page (content not restored).</td></tr>
+        <tr><td>Unknown user drops after name, before subject/taste</td><td>Auto-login → home page; subject and taste are <b>not</b> collected/run for that user.</td></tr>
+        <tr><td>App killed by OS mid-flow</td><td>Same matrix, keyed on <span class="mono">onboarding_state</span>.</td></tr>
+        <tr><td>Verified but profile write failed</td><td>Re-attempt write next launch; treat as earliest pending state until confirmed.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9 ───────────────────────── -->
+  <section id="data" class="fade">
+    <div class="sec-head"><div class="sec-num">9</div><h2>Data model &amp; source tags</h2></div>
+    <div class="card">
+      <table>
+        <tr><th style="width:20%">Field</th><th style="width:20%">Required / when</th><th style="width:22%">Captured at</th><th>Notes</th></tr>
+        <tr><td><span class="mono">phone</span></td><td>Yes (key)</td><td>Auth (#3)</td><td>Always present post-verification.</td></tr>
+        <tr><td><span class="mono">phone_source</span></td><td>Yes</td><td>Auth</td><td><span class="mono">truecaller</span> | <span class="mono">manual</span></td></tr>
+        <tr><td><span class="mono">name</span></td><td>Yes</td><td>TC / entry / after-OTP</td><td>Timing per #6. Not skippable.</td></tr>
+        <tr><td><span class="mono">name_source</span></td><td>Yes</td><td>When name set</td><td><span class="mono">truecaller</span> | <span class="mono">manual</span></td></tr>
+        <tr><td><span class="mono">intent</span></td><td>Yes</td><td>Launch (#2)</td><td><span class="mono">known</span> | <span class="mono">unknown</span></td></tr>
+        <tr><td><span class="mono">content_id</span></td><td>Known only</td><td>Launch (deep link/campaign)</td><td>Seeds the inferred subject (#5).</td></tr>
+        <tr><td><span class="mono">subject</span></td><td>Unknown: inline single-select (optional) · Known: inferred</td><td>#4 / inferred (#5)</td><td>Known derives from <span class="mono">content_id</span>.</td></tr>
+        <tr><td><span class="mono">grade</span></td><td>Deferred</td><td>Entering a feature that needs grade (#6)</td><td>Program + year; blocking, asked once.</td></tr>
+        <tr><td><span class="mono">onboarding_state</span></td><td>Yes</td><td>Throughout</td><td>Drives resume (#8).</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10 ───────────────────────── -->
+  <section id="metrics" class="fade">
+    <div class="sec-head"><div class="sec-num">10</div><h2>Success metrics</h2></div>
+    <div class="card">
+      <p class="lead">Measured on <b>onboarding users only</b> (new installs entering this flow).</p>
+      <table>
+        <tr><th style="width:40%">Metric</th><th>Definition</th></tr>
+        <tr><td><b>Primary — Verification rate</b></td><td>% who complete phone verification (Truecaller or OTP).</td></tr>
+        <tr><td><b>Primary — Name completion rate</b></td><td>% for whom we hold a name (Truecaller or captured).</td></tr>
+        <tr><td>Secondary — Intent split</td><td>Known vs Unknown volume + per-branch completion.</td></tr>
+        <tr><td>Secondary — Truecaller adoption</td><td>% verified via Truecaller vs manual OTP.</td></tr>
+        <tr><td>Secondary — Grade-gate answer rate</td><td>% who answer the grade prompt when entering a feature that needs it.</td></tr>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<div class="last-updated">Last updated · 20 Jun 2026</div>
+
+<script>
+  const obs = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.06});
+  document.querySelectorAll('section').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
