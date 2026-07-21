@@ -50,23 +50,33 @@ export function TemplateCard({
       className="anim-pop group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift"
       style={{ animationDelay: `${Math.min(index, 12) * 0.04}s` }}
     >
-      <button
-        onClick={() => onOpenDetail(template)}
-        className="relative block w-full text-left"
-        title="View details"
-      >
-        <CardPreview id={template.id} title={template.name} thumbBase={thumbBase} />
-        <span className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100">
-          <span className="rounded-lg bg-white/95 px-3 py-1.5 text-xs font-semibold text-midnight shadow">
-            View details
+      <div className="relative">
+        <button
+          onClick={() => onOpenDetail(template)}
+          className="relative block w-full text-left"
+          title="View details"
+        >
+          <CardPreview id={template.id} title={template.name} thumbBase={thumbBase} />
+          <span className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100">
+            <span className="rounded-lg bg-white/95 px-3 py-1.5 text-xs font-semibold text-midnight shadow">
+              View details
+            </span>
           </span>
-        </span>
-        {template.type && template.type !== "Other" && (
-          <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2 py-1 text-[10px] font-semibold text-midnight backdrop-blur">
-            {template.type}
-          </span>
-        )}
-      </button>
+          {template.type && template.type !== "Other" && (
+            <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2 py-1 text-[10px] font-semibold text-midnight backdrop-blur">
+              {template.type}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={openPreview}
+          title="Open full screen in a new tab"
+          aria-label="Open full screen in a new tab"
+          className="interactive absolute right-3 top-3 z-10 flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[11px] font-semibold text-midnight opacity-0 shadow-soft backdrop-blur transition hover:bg-white group-hover:opacity-100"
+        >
+          ↗ Open
+        </button>
+      </div>
 
       <div className="flex flex-1 flex-col p-4">
         <button
