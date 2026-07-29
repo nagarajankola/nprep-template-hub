@@ -21,9 +21,19 @@
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9FE8F5}
   h1{font-size:32px;font-weight:800;letter-spacing:-.6px;margin-top:8px;line-height:1.12}
 
+  /* ── STICKY CHAPTER NAV ── */
+  html{scroll-behavior:smooth}
+  .chapters{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #E3E8F5;box-shadow:0 4px 14px rgba(19,27,99,.04)}
+  .chapters-inner{max-width:1080px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:0 22px}
+  .chapters-inner::-webkit-scrollbar{display:none}
+  .chapter{flex:0 0 auto;position:relative;padding:15px 14px 14px;font-size:13px;font-weight:600;color:#8A90A2;text-decoration:none;white-space:nowrap;transition:color .2s;font-family:'Poppins';cursor:pointer}
+  .chapter:hover{color:#131B63}
+  .chapter.active{color:#131B63;font-weight:700}
+  .chapter.active::after{content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:3px;background:#15CAE8;border-radius:3px 3px 0 0}
+
   /* ── SECTION ── */
-  section{margin-top:38px;scroll-margin-top:18px}
-  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:16px;position:sticky;top:0;z-index:20;background:#EEF1F6;padding:12px 0}
+  section{margin-top:38px;scroll-margin-top:68px}
+  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
   .sec-num{min-width:30px;height:30px;border-radius:9px;background:var(--midnight);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;padding:0 7px}
   h2{font-size:20px;font-weight:800;color:var(--midnight);letter-spacing:-.3px}
   h3{font-size:14.5px;font-weight:700;color:var(--midnight);margin:20px 0 9px;display:flex;align-items:center;gap:8px}
@@ -110,25 +120,24 @@
   </div>
 </header>
 
+<nav class="chapters">
+  <div class="chapters-inner">
+    <a class="chapter" href="#scope">Scope</a>
+    <a class="chapter" href="#intent">Intent</a>
+    <a class="chapter" href="#auth">Auth</a>
+    <a class="chapter" href="#unknown">Unknown</a>
+    <a class="chapter" href="#known">Known</a>
+    <a class="chapter" href="#deferred">Profile data</a>
+    <a class="chapter" href="#existing">Existing users</a>
+    <a class="chapter" href="#resume">Resume</a>
+    <a class="chapter" href="#data">Data model</a>
+    <a class="chapter" href="#metrics">Metrics</a>
+  </div>
+</nav>
+
 <div class="wrap">
 
-  <div class="toc">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888">On this page</div>
-    <div class="toc-grid">
-      <a href="#scope"><span>1</span>Scope &amp; definitions</a>
-      <a href="#intent"><span>2</span>Intent detection &amp; routing</a>
-      <a href="#auth"><span>3</span>Authentication</a>
-      <a href="#unknown"><span>4</span>Flow A — Unknown intent</a>
-      <a href="#known"><span>5</span>Flow B — Known intent</a>
-      <a href="#deferred"><span>6</span>Profile data collection</a>
-      <a href="#existing"><span>7</span>Existing / returning users</a>
-      <a href="#resume"><span>8</span>Drop-off &amp; resume</a>
-      <a href="#data"><span>9</span>Data model &amp; source tags</a>
-      <a href="#metrics"><span>10</span>Success metrics</a>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:13px;border-left:4px solid var(--sky)">
+  <div class="card" style="margin-top:22px;display:flex;align-items:center;gap:13px;border-left:4px solid var(--sky)">
     <div style="font-size:20px">🔗</div>
     <div style="font-size:13px"><b style="color:var(--midnight)">Live prototype</b> — clickable reference for the flows in this spec: <a href="https://nprep-signup.vercel.app/" target="_blank" style="color:#1E6FAF;font-weight:600">nprep-signup.vercel.app</a></div>
   </div>
@@ -507,6 +516,25 @@
 <script>
   const obs = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.06});
   document.querySelectorAll('section').forEach(s=>obs.observe(s));
+
+  // sticky chapter-nav scroll-spy
+  const chapters=[...document.querySelectorAll('.chapter')];
+  const byId={}; chapters.forEach(a=>byId[a.getAttribute('href').slice(1)]=a);
+  const navInner=document.querySelector('.chapters-inner');
+  if(chapters[0]) chapters[0].classList.add('active');
+  const spy=new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        chapters.forEach(l=>l.classList.remove('active'));
+        const a=byId[e.target.id];
+        if(a){
+          a.classList.add('active');
+          navInner.scrollTo({left:a.offsetLeft-navInner.clientWidth/2+a.clientWidth/2,behavior:'smooth'});
+        }
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px',threshold:0});
+  document.querySelectorAll('section[id]').forEach(s=>spy.observe(s));
 </script>
 </body>
 </html>
