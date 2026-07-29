@@ -132,6 +132,8 @@
     <a class="chapter" href="#resume">Resume</a>
     <a class="chapter" href="#data">Data model</a>
     <a class="chapter" href="#metrics">Metrics</a>
+    <a class="chapter" href="#tracking">Tracking</a>
+    <a class="chapter" href="#dashboard">Dashboard</a>
   </div>
 </nav>
 
@@ -509,9 +511,250 @@
     </div>
   </section>
 
+  <!-- 11 ───────────────────────── -->
+  <section id="tracking" class="fade">
+    <div class="sec-head"><div class="sec-num">11</div><h2>Data points to track <span class="tag" style="background:#EEF1F6;color:#555;font-size:11px">Engineering</span></h2></div>
+    <p class="lead" style="margin-bottom:12px">Every event the app must emit across both flows, grouped by surface. These feed the analytics in <a href="#dashboard" style="color:#1E6FAF;font-weight:600">#12</a>.</p>
+    <div class="note warn"><span class="ic">⚠️</span><div><b>Naming —</b> event &amp; property names here are <b>indicative only</b>. The convention is engineering's call — match whatever the CleverTap / current stack already uses. What matters is that the event <b>and its properties</b> are captured.</div></div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Global properties <span style="font-weight:500;color:var(--muted);font-size:12px">— attached to every event</span></h3>
+      <table>
+        <tr><th style="width:34%">Property</th><th>Value</th></tr>
+        <tr><td><span class="mono">platform</span></td><td>Android | iOS</td></tr>
+        <tr><td><span class="mono">app_version</span></td><td>build number</td></tr>
+        <tr><td><span class="mono">anon_id</span></td><td>device / anon id — present before verification</td></tr>
+        <tr><td><span class="mono">user_id</span></td><td>set after verification (keyed on phone)</td></tr>
+        <tr><td><span class="mono">intent</span></td><td>known | unknown (once resolved at launch)</td></tr>
+        <tr><td><span class="mono">onboarding_state</span></td><td>verified | named | complete</td></tr>
+      </table>
+
+      <h3>Splash &amp; routing</h3>
+      <table>
+        <tr><th style="width:26%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">app_opened</span></td><td>App launches</td><td><span class="mono">session_type</span> (cold/warm), <span class="mono">has_deep_link</span>, <span class="mono">has_campaign</span>, <span class="mono">is_authenticated</span></td></tr>
+        <tr><td><span class="mono">splash_advanced</span></td><td>Splash auto-advances or is tapped</td><td><span class="mono">advance_type</span> (auto/tap), <span class="mono">duration_ms</span>, <span class="mono">intent_resolved</span></td></tr>
+        <tr><td><span class="mono">intent_resolved</span></td><td>Intent detection completes</td><td><span class="mono">intent</span>, <span class="mono">source</span> (deep_link/campaign/none), <span class="mono">content_id</span>, <span class="mono">resolve_ms</span>, <span class="mono">fallback_to_unknown</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Authentication</h3>
+      <table>
+        <tr><th style="width:28%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">phone_screen_viewed</span></td><td>Phone-entry screen shown</td><td><span class="mono">branch</span>, <span class="mono">keyboard_autofocused</span></td></tr>
+        <tr><td><span class="mono">phone_number_entered</span></td><td>10 valid digits present</td><td><span class="mono">entry_method</span> (typed/pasted/autofill), <span class="mono">normalization</span> (stripped_91/stripped_0/none)</td></tr>
+        <tr><td><span class="mono">get_otp_fired</span></td><td>Get OTP triggered</td><td><span class="mono">trigger</span> (auto_fresh_entry/manual_after_edit)</td></tr>
+        <tr><td><span class="mono">truecaller_shown</span></td><td>Truecaller sheet presented</td><td><span class="mono">branch</span></td></tr>
+        <tr><td><span class="mono">truecaller_continued</span></td><td>User one-taps Truecaller</td><td>— (name + phone captured, <span class="mono">source=truecaller</span>)</td></tr>
+        <tr><td><span class="mono">truecaller_dismissed</span></td><td>Sheet dismissed / declined → manual</td><td><span class="mono">reason</span> (dismissed/not_installed/token_failed)</td></tr>
+        <tr><td><span class="mono">otp_screen_viewed</span></td><td>OTP screen shown</td><td>—</td></tr>
+        <tr><td><span class="mono">sms_permission_result</span></td><td>Android SMS-read permission answered (first time)</td><td><span class="mono">granted</span></td></tr>
+        <tr><td><span class="mono">otp_verify_fired</span></td><td>Verify triggered</td><td><span class="mono">trigger</span> (auto_read/auto_fresh_4digit/manual_after_edit)</td></tr>
+        <tr><td><span class="mono">otp_verified</span></td><td>OTP / Truecaller verification succeeds</td><td><span class="mono">method</span> (truecaller/otp), <span class="mono">is_existing_user</span>, <span class="mono">verify_ms</span></td></tr>
+        <tr><td><span class="mono">otp_invalid</span></td><td>Entered OTP rejected</td><td><span class="mono">attempt_number</span></td></tr>
+        <tr><td><span class="mono">otp_resend_tapped</span></td><td>Resend used (after 30s)</td><td><span class="mono">channel</span> (sms/whatsapp)</td></tr>
+        <tr><td><span class="mono">otp_edit_number_tapped</span></td><td>Edit → back to phone (pre-filled)</td><td>—</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Unknown flow — banners, subject, taste</h3>
+      <table>
+        <tr><th style="width:28%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">banner_viewed</span></td><td>A value-prop slide becomes visible</td><td><span class="mono">slide_index</span> (1–3)</td></tr>
+        <tr><td><span class="mono">get_started_tapped</span></td><td>Get started fires → phone step</td><td><span class="mono">trigger</span> (manual_tap/auto_after_slide3), <span class="mono">slide_index_at_tap</span></td></tr>
+        <tr><td><span class="mono">subject_screen_viewed</span></td><td>Subject select shown</td><td>—</td></tr>
+        <tr><td><span class="mono">subject_selected</span></td><td>A subject is chosen</td><td><span class="mono">subject</span></td></tr>
+        <tr><td><span class="mono">subject_skipped</span></td><td>User skips (optional)</td><td>—</td></tr>
+        <tr><td><span class="mono">taste_started</span></td><td>Taste video auto-starts</td><td><span class="mono">topic</span>, <span class="mono">subject</span></td></tr>
+        <tr><td><span class="mono">taste_question_answered</span></td><td>User answers a checkpoint question</td><td><span class="mono">question_index</span> (1–3), <span class="mono">is_correct</span>, <span class="mono">attempt_number</span>, <span class="mono">answered_during</span> (playback/pause)</td></tr>
+        <tr><td><span class="mono">taste_checkpoint_paused</span></td><td>Video pauses at an unanswered checkpoint</td><td><span class="mono">checkpoint_index</span></td></tr>
+        <tr><td><span class="mono">taste_completed</span></td><td>All 3 correct → unlock</td><td><span class="mono">first_attempt_score</span> (0–3), <span class="mono">total_attempts</span>, <span class="mono">total_seconds</span></td></tr>
+        <tr><td><span class="mono">taste_exited</span></td><td>User leaves mid-lesson</td><td><span class="mono">last_checkpoint</span>, <span class="mono">questions_correct</span></td></tr>
+        <tr><td><span class="mono">taste_video_load_failed</span></td><td>Video fails to load → home</td><td>—</td></tr>
+        <tr><td><span class="mono">score_screen_viewed</span></td><td>Score / affirmation shown</td><td><span class="mono">first_attempt_score</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Known flow — preview &amp; content</h3>
+      <table>
+        <tr><th style="width:28%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">content_preview_shown</span></td><td>Known preview card renders</td><td><span class="mono">content_id</span>, <span class="mono">content_type</span>, <span class="mono">preview_loaded</span> (metadata/generic_fallback)</td></tr>
+        <tr><td><span class="mono">content_opened</span></td><td>Deep-linked content opens after name</td><td><span class="mono">content_id</span>, <span class="mono">content_type</span>, <span class="mono">inferred_subject</span></td></tr>
+        <tr><td><span class="mono">content_paywall_intercepted</span></td><td>GO PRO shown instead (paywalled, free user)</td><td><span class="mono">content_id</span></td></tr>
+        <tr><td><span class="mono">content_exited</span></td><td>User leaves the content block</td><td><span class="mono">content_id</span>, <span class="mono">seconds_spent</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Name, handoff &amp; grade gate</h3>
+      <table>
+        <tr><th style="width:28%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">name_screen_viewed</span></td><td>Name prompt shown</td><td><span class="mono">branch</span>, <span class="mono">trigger</span> (unknown_entry/known_after_otp/resume_reask)</td></tr>
+        <tr><td><span class="mono">name_entered</span></td><td>Name submitted</td><td><span class="mono">char_count</span>, <span class="mono">manual_case_override</span>, <span class="mono">script</span> (latin/non_latin)</td></tr>
+        <tr><td><span class="mono">home_reached</span></td><td>User lands on the home page (handoff)</td><td><span class="mono">branch</span>, <span class="mono">path</span> (fresh/resumed)</td></tr>
+        <tr><td><span class="mono">first_reward_popup_shown</span></td><td>First-reward popup on home return</td><td><span class="mono">branch</span></td></tr>
+        <tr><td><span class="mono">grade_gate_triggered</span></td><td>User taps a feature needing grade</td><td><span class="mono">feature</span> (qbank/tests/lectures/jobs), <span class="mono">is_first_time</span></td></tr>
+        <tr><td><span class="mono">grade_submitted</span></td><td>Grade captured at the gate</td><td><span class="mono">program</span>, <span class="mono">year</span>, <span class="mono">feature_that_triggered</span></td></tr>
+        <tr><td><span class="mono">grade_gate_dismissed</span></td><td>User backs out (feature stays blocked)</td><td><span class="mono">feature</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Backend &amp; lifecycle</h3>
+      <table>
+        <tr><th style="width:28%">Event</th><th style="width:32%">Fires when</th><th>Key properties</th></tr>
+        <tr><td><span class="mono">existing_user_login</span></td><td>Verified phone matches an existing account</td><td><span class="mono">via</span> (truecaller/otp/session), <span class="mono">had_deep_link</span></td></tr>
+        <tr><td><span class="mono">onboarding_resumed</span></td><td>Returning user auto-logs in mid-onboarding</td><td><span class="mono">resume_state</span> (name_pending/incomplete/complete), <span class="mono">branch</span></td></tr>
+        <tr><td><span class="mono">onboarding_restarted</span></td><td>Pre-verify drop → fresh start next launch</td><td><span class="mono">previous_intent</span>, <span class="mono">new_intent</span></td></tr>
+        <tr><td><span class="mono">known_content_restored</span></td><td>Known drop reopened via the same deep link</td><td><span class="mono">content_id</span></td></tr>
+        <tr><td><span class="mono">profile_write_failed</span></td><td>A profile field fails to persist server-side</td><td><span class="mono">field</span>, <span class="mono">retry_scheduled</span></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 12 ───────────────────────── -->
+  <section id="dashboard" class="fade">
+    <div class="sec-head"><div class="sec-num">12</div><h2>Analytics dashboard <span class="tag" style="background:#EEF1F6;color:#555;font-size:11px">Data team</span></h2></div>
+    <p class="lead" style="margin-bottom:12px">What the data-analytics team should build from the events in <a href="#tracking" style="color:#1E6FAF;font-weight:600">#11</a>. Priority-tagged so P0 ships first.</p>
+    <div class="note warn"><span class="ic">⚠️</span><div><b>Verification date is a cohort filter, not just a date range.</b> Onboarding quality drifts with campaign, season and app version — completion &amp; resume must be readable by the cohort that <b>verified</b> in a given week/month, not only by calendar range.</div></div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Build priority</h3>
+      <table>
+        <tr><th style="width:16%">Priority</th><th style="width:14%">Count</th><th>Meaning</th></tr>
+        <tr><td><span class="tag tag-block">P0</span></td><td>22</td><td>Required at launch. Build before anything P1.</td></tr>
+        <tr><td><span class="tag tag-defer">P1</span></td><td>20</td><td>Adds diagnostic depth. Build after every P0 is live.</td></tr>
+      </table>
+
+      <h3>Global filters</h3>
+      <table>
+        <tr><th style="width:30%">Filter</th><th>Values</th></tr>
+        <tr><td>Date range</td><td>IST calendar days, server time (never device time)</td></tr>
+        <tr><td>Verification cohort</td><td>Week / month the user verified — bucketable</td></tr>
+        <tr><td>Platform</td><td>Android | iOS</td></tr>
+        <tr><td>Intent</td><td>Known | Unknown</td></tr>
+        <tr><td>Auth source</td><td>Truecaller | manual OTP</td></tr>
+        <tr><td>Path</td><td>Fresh | resumed</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 1 — Onboarding funnel <span style="font-weight:500;color:var(--muted);font-size:12px">· the north star</span></h3>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Verification rate</td><td><span class="tag tag-block">P0</span></td><td>Users who verify a phone ÷ app opens entering onboarding. <b>Primary.</b></td></tr>
+        <tr><td>Name completion rate</td><td><span class="tag tag-block">P0</span></td><td>Users with a name ÷ verified users. <b>Primary.</b></td></tr>
+        <tr><td>Onboarding completion rate</td><td><span class="tag tag-block">P0</span></td><td>Reached home page ÷ app opens.</td></tr>
+        <tr><td>Step-wise drop-off</td><td><span class="tag tag-block">P0</span></td><td>Splash → phone → OTP → verified → name → home; where users fall out.</td></tr>
+        <tr><td>Funnel by intent</td><td><span class="tag tag-block">P0</span></td><td>The whole funnel split Known vs Unknown.</td></tr>
+        <tr><td>Median time to complete</td><td><span class="tag tag-defer">P1</span></td><td>App open → home page, median &amp; distribution.</td></tr>
+      </table>
+      <div class="note info"><span class="ic">📈</span><div>All funnel counters plotted <b>daily with a 7-day rolling average</b>.</div></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 2 — Intent split</h3>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Known vs Unknown volume</td><td><span class="tag tag-block">P0</span></td><td>Daily count of each branch.</td></tr>
+        <tr><td>Completion per branch</td><td><span class="tag tag-block">P0</span></td><td>Onboarding completion rate for each.</td></tr>
+        <tr><td>Known content-reach</td><td><span class="tag tag-block">P0</span></td><td>Verified Known users who actually open the content they came for.</td></tr>
+        <tr><td>Broken-link fallback rate</td><td><span class="tag tag-defer">P1</span></td><td>Known intents that fell back to Unknown (dead content_id).</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 3 — Authentication</h3>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Truecaller adoption</td><td><span class="tag tag-block">P0</span></td><td>% verified via Truecaller vs manual OTP.</td></tr>
+        <tr><td>OTP verify-success rate</td><td><span class="tag tag-block">P0</span></td><td>Verified ÷ OTPs requested.</td></tr>
+        <tr><td>OTP invalid rate &amp; avg attempts</td><td><span class="tag tag-block">P0</span></td><td>Invalid entries ÷ attempts; mean tries to pass.</td></tr>
+        <tr><td>Resend rate &amp; channel split</td><td><span class="tag tag-defer">P1</span></td><td>Resends ÷ OTP screens; SMS vs WhatsApp.</td></tr>
+        <tr><td>Edit-number rate</td><td><span class="tag tag-defer">P1</span></td><td>How often users go back to fix the number.</td></tr>
+        <tr><td>Android auto-read success</td><td><span class="tag tag-defer">P1</span></td><td>Auto-read + auto-verify ÷ Android permission-granted.</td></tr>
+        <tr><td>Median time to verify</td><td><span class="tag tag-defer">P1</span></td><td>Phone screen → verified.</td></tr>
+        <tr><td>Paste / autofill usage</td><td><span class="tag tag-defer">P1</span></td><td>Share of numbers pasted vs typed.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 4 — Taste lesson &amp; quiz <span style="font-weight:500;color:var(--muted);font-size:12px">· Unknown only</span></h3>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Taste start rate</td><td><span class="tag tag-block">P0</span></td><td>Taste started ÷ Unknown verified.</td></tr>
+        <tr><td>Taste completion rate</td><td><span class="tag tag-block">P0</span></td><td>All-3-correct finishes ÷ taste started.</td></tr>
+        <tr><td>Drop-off by checkpoint</td><td><span class="tag tag-block">P0</span></td><td>Where users abandon — checkpoint 1, 2 or 3.</td></tr>
+        <tr><td>First-attempt score distribution</td><td><span class="tag tag-block">P0</span></td><td>Share scoring 0/1/2/3 on first tries.</td></tr>
+        <tr><td>Avg attempts per checkpoint</td><td><span class="tag tag-defer">P1</span></td><td>Retries needed to pass each question.</td></tr>
+        <tr><td>Answered during play vs pause</td><td><span class="tag tag-defer">P1</span></td><td>Share answered before vs at the forced pause.</td></tr>
+        <tr><td>Median time per checkpoint &amp; total</td><td><span class="tag tag-defer">P1</span></td><td>Time on each question and the full taste.</td></tr>
+        <tr><td>Video-fail → home rate</td><td><span class="tag tag-defer">P1</span></td><td>How often a load failure short-circuits to home.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 5 — Subject &nbsp;·&nbsp; Panel 6 — Grade gate</h3>
+      <h4>Subject (Unknown)</h4>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Selection vs skip rate</td><td><span class="tag tag-block">P0</span></td><td>Chose a subject vs skipped (it's optional).</td></tr>
+        <tr><td>Subject distribution</td><td><span class="tag tag-defer">P1</span></td><td>Which subjects are picked.</td></tr>
+      </table>
+      <h4>Deferred grade gate</h4>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Grade-gate trigger rate</td><td><span class="tag tag-block">P0</span></td><td>Users who hit a grade-requiring feature ÷ home reached.</td></tr>
+        <tr><td>Grade answer rate</td><td><span class="tag tag-block">P0</span></td><td>Grade submitted ÷ gate triggered.</td></tr>
+        <tr><td>Triggering-feature split</td><td><span class="tag tag-defer">P1</span></td><td>Which feature most often triggers the gate.</td></tr>
+        <tr><td>Dismiss / re-prompt rate</td><td><span class="tag tag-defer">P1</span></td><td>Gate backed out of before answering.</td></tr>
+        <tr><td>Program / year distribution</td><td><span class="tag tag-defer">P1</span></td><td>Captured grade mix.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Panel 7 — Drop-off &amp; resume &nbsp;·&nbsp; Panel 8 — Known journey</h3>
+      <h4>Drop-off &amp; resume</h4>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Drop-off by stage</td><td><span class="tag tag-block">P0</span></td><td>Pre-verification vs post-verification abandonment.</td></tr>
+        <tr><td>Pre-verify restart rate</td><td><span class="tag tag-block">P0</span></td><td>Users who restart (no account) on return.</td></tr>
+        <tr><td>Resume rate</td><td><span class="tag tag-block">P0</span></td><td>Post-verify droppers who come back and finish.</td></tr>
+        <tr><td>Name re-ask rate</td><td><span class="tag tag-defer">P1</span></td><td>Dropped at the name step and re-prompted.</td></tr>
+        <tr><td>Known content-restore rate</td><td><span class="tag tag-defer">P1</span></td><td>Same-deep-link reopens that restore the content.</td></tr>
+        <tr><td>Existing-user login rate</td><td><span class="tag tag-defer">P1</span></td><td>Verifications that match an existing account.</td></tr>
+      </table>
+      <h4>Known journey</h4>
+      <table>
+        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
+        <tr><td>Name-after-OTP completion</td><td><span class="tag tag-block">P0</span></td><td>Known users who pass the name step to reach content.</td></tr>
+        <tr><td>Paywall-intercept rate</td><td><span class="tag tag-defer">P1</span></td><td>Free users hitting GO PRO on a paywalled deep link.</td></tr>
+        <tr><td>First-reward popup engagement</td><td><span class="tag tag-defer">P1</span></td><td>Shown vs dismissed on home return.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Definitions that must not drift</h3>
+      <table>
+        <tr><th style="width:26%">Term</th><th>Definition</th></tr>
+        <tr><td>Day</td><td>IST calendar day from server time. Never device time.</td></tr>
+        <tr><td>Verified</td><td>A verified phone exists (Truecaller <b>or</b> OTP). The account-creation moment.</td></tr>
+        <tr><td>Onboarding complete</td><td>Reached the home page <b>with a name captured</b>. Grade is <b>not</b> part of completion (deferred).</td></tr>
+        <tr><td>First-attempt score</td><td>Correct on the <b>first</b> try per taste question (0–3). Distinct from finishing, which always ends at 3/3.</td></tr>
+        <tr><td>Intent</td><td>Resolved once at launch. A dead deep link counts as Unknown.</td></tr>
+        <tr><td>Verification cohort</td><td>The week/month a user first verified — not install or first-open day.</td></tr>
+        <tr><td>Resume vs restart</td><td>The dividing line is verification: before it → restart (no account); after → resume.</td></tr>
+        <tr><td>Taste completion</td><td>All 3 checkpoints answered correctly (finish). Distinct from taste started.</td></tr>
+      </table>
+    </div>
+  </section>
+
 </div>
 
-<div class="last-updated">Last updated · 20 Jun 2026</div>
+<div class="last-updated">Last updated · 1 Jul 2026</div>
 
 <script>
   const obs = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.06});
