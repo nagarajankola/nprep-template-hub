@@ -86,6 +86,14 @@
   .tag-defer{background:var(--goldBg);color:#9A6212}
   .tag-block{background:var(--redBg);color:#A82F2F}
 
+  /* ── FUNNEL ── */
+  .funnel{display:flex;flex-direction:column;align-items:center;gap:5px;margin:12px 0 4px}
+  .fstep{display:flex;align-items:center;justify-content:center;gap:9px;max-width:100%;background:linear-gradient(135deg,#131B63,#1E2875);color:#fff;border-radius:9px;padding:10px 15px;box-shadow:0 4px 12px rgba(19,27,99,.12)}
+  .fstep.alt{background:linear-gradient(135deg,#0FA8C2,#15CAE8)}
+  .fstep .fn{width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;flex-shrink:0}
+  .fstep .fl{font-size:12.5px;font-weight:600;line-height:1.2}
+  .fnote{font-size:10.5px;color:var(--muted);text-align:center;margin-top:6px;font-style:italic}
+
   ul.clean{list-style:none;margin-top:6px}
   ul.clean li{position:relative;padding-left:20px;font-size:12.5px;margin-bottom:7px;line-height:1.5}
   ul.clean li::before{content:'';position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--sky)}
@@ -625,59 +633,90 @@
       <h3 style="margin-top:0">Build priority</h3>
       <table>
         <tr><th style="width:16%">Priority</th><th style="width:14%">Count</th><th>Meaning</th></tr>
-        <tr><td><span class="tag tag-block">P0</span></td><td>22</td><td>Required at launch. Build before anything P1.</td></tr>
-        <tr><td><span class="tag tag-defer">P1</span></td><td>20</td><td>Adds diagnostic depth. Build after every P0 is live.</td></tr>
+        <tr><td><span class="tag tag-block">P0</span></td><td>11</td><td>Required at launch. Build before anything P1.</td></tr>
+        <tr><td><span class="tag tag-defer">P1</span></td><td>9</td><td>Adds diagnostic depth. Build after every P0 is live.</td></tr>
       </table>
 
       <h3>Global filters</h3>
       <table>
         <tr><th style="width:30%">Filter</th><th>Values</th></tr>
         <tr><td>Date range</td><td>IST calendar days, server time (never device time)</td></tr>
-        <tr><td>Verification cohort</td><td>Week / month the user verified — bucketable</td></tr>
+        <tr><td>Registration date</td><td>When the user registered — bucketable by week / month (cohort)</td></tr>
+        <tr><td>Registration source</td><td>Acquisition source / campaign the user came from</td></tr>
+        <tr><td>Stream</td><td>The user's stream</td></tr>
+        <tr><td>Grade</td><td>Program + year</td></tr>
+        <tr><td>Location</td><td>State / region</td></tr>
         <tr><td>Platform</td><td>Android | iOS</td></tr>
         <tr><td>Intent</td><td>Known | Unknown</td></tr>
-        <tr><td>Auth source</td><td>Truecaller | manual OTP</td></tr>
-        <tr><td>Path</td><td>Fresh | resumed</td></tr>
       </table>
     </div>
 
     <div class="card">
-      <h3 style="margin-top:0">Panel 1 — Onboarding funnel <span style="font-weight:500;color:var(--muted);font-size:12px">· the north star</span></h3>
-      <table>
-        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
-        <tr><td>Verification rate</td><td><span class="tag tag-block">P0</span></td><td>Users who verify a phone ÷ app opens entering onboarding. <b>Primary.</b></td></tr>
-        <tr><td>Name completion rate</td><td><span class="tag tag-block">P0</span></td><td>Users with a name ÷ verified users. <b>Primary.</b></td></tr>
-        <tr><td>Onboarding completion rate</td><td><span class="tag tag-block">P0</span></td><td>Reached home page ÷ app opens.</td></tr>
-        <tr><td>Step-wise drop-off</td><td><span class="tag tag-block">P0</span></td><td>Splash → phone → OTP → verified → name → home; where users fall out.</td></tr>
-        <tr><td>Funnel by intent</td><td><span class="tag tag-block">P0</span></td><td>The whole funnel split Known vs Unknown.</td></tr>
-        <tr><td>Median time to complete</td><td><span class="tag tag-defer">P1</span></td><td>App open → home page, median &amp; distribution.</td></tr>
-      </table>
-      <div class="note info"><span class="ic">📈</span><div>All funnel counters plotted <b>daily with a 7-day rolling average</b>.</div></div>
+      <h3 style="margin-top:0">Panel 1 — Onboarding funnel <span class="tag tag-block">P0</span> <span style="font-weight:500;color:var(--muted);font-size:12px">· the north star</span></h3>
+      <p class="lead" style="margin-bottom:2px">One end-to-end funnel. For <b>every</b> step report the count that reached it and the <b>step-to-step drop-off</b> (reached the step above but not this one). Plot daily with a 7-day rolling average.</p>
+      <div class="funnel">
+        <div class="fstep" style="width:100%"><span class="fn">1</span><span class="fl">App open</span></div>
+        <div class="fstep" style="width:95%"><span class="fn">2</span><span class="fl">Banner screen reached</span></div>
+        <div class="fstep" style="width:90%"><span class="fn">3</span><span class="fl">Start Now clicked</span></div>
+        <div class="fstep" style="width:85%"><span class="fn">4</span><span class="fl">Phone entered</span></div>
+        <div class="fstep" style="width:80%"><span class="fn">5</span><span class="fl">OTP verified</span></div>
+        <div class="fstep" style="width:75%"><span class="fn">6</span><span class="fl">Name entered</span></div>
+        <div class="fstep" style="width:70%"><span class="fn">7</span><span class="fl">Subject selected</span></div>
+        <div class="fstep" style="width:66%"><span class="fn">8</span><span class="fl">Q1 completed</span></div>
+        <div class="fstep" style="width:62%"><span class="fn">9</span><span class="fl">Any CTA clicked</span></div>
+        <div class="fstep" style="width:58%"><span class="fn">10</span><span class="fl">Stream entered</span></div>
+        <div class="fstep" style="width:54%"><span class="fn">11</span><span class="fl">Grade entered</span></div>
+        <div class="fstep" style="width:50%"><span class="fn">12</span><span class="fl">Any activity</span></div>
+      </div>
+      <div class="fnote">Bar widths are illustrative — actual conversion populated by the data team.</div>
     </div>
 
     <div class="card">
-      <h3 style="margin-top:0">Panel 2 — Intent split</h3>
-      <table>
-        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
-        <tr><td>Known vs Unknown volume</td><td><span class="tag tag-block">P0</span></td><td>Daily count of each branch.</td></tr>
-        <tr><td>Completion per branch</td><td><span class="tag tag-block">P0</span></td><td>Onboarding completion rate for each.</td></tr>
-        <tr><td>Known content-reach</td><td><span class="tag tag-block">P0</span></td><td>Verified Known users who actually open the content they came for.</td></tr>
-        <tr><td>Broken-link fallback rate</td><td><span class="tag tag-defer">P1</span></td><td>Known intents that fell back to Unknown (dead content_id).</td></tr>
-      </table>
+      <h3 style="margin-top:0">Panel 2 — Alternate-path funnels <span class="tag tag-defer">P1</span></h3>
+      <p class="lead" style="margin-bottom:2px">For users who <b>skip</b> a step, track whether they still convert downstream.</p>
+      <div class="split" style="margin-top:12px">
+        <div>
+          <h4>Skipped the name field</h4>
+          <div class="funnel">
+            <div class="fstep alt" style="width:100%"><span class="fn">1</span><span class="fl">Skipped name</span></div>
+            <div class="fstep alt" style="width:82%"><span class="fn">2</span><span class="fl">Landed on home</span></div>
+            <div class="fstep alt" style="width:66%"><span class="fn">3</span><span class="fl">Grade entered</span></div>
+            <div class="fstep alt" style="width:52%"><span class="fn">4</span><span class="fl">Name entered</span></div>
+            <div class="fstep alt" style="width:40%"><span class="fn">5</span><span class="fl">Any activity</span></div>
+          </div>
+        </div>
+        <div>
+          <h4>Skipped subject selection</h4>
+          <div class="funnel">
+            <div class="fstep alt" style="width:100%"><span class="fn">1</span><span class="fl">Skipped subject</span></div>
+            <div class="fstep alt" style="width:80%"><span class="fn">2</span><span class="fl">Landed on home</span></div>
+            <div class="fstep alt" style="width:60%"><span class="fn">3</span><span class="fl">Grade entered</span></div>
+            <div class="fstep alt" style="width:44%"><span class="fn">4</span><span class="fl">Any activity</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <h4>Skipped the video + question screen</h4>
+        <div class="funnel">
+          <div class="fstep alt" style="width:100%"><span class="fn">1</span><span class="fl">Skipped video + question</span></div>
+          <div class="fstep alt" style="width:78%"><span class="fn">2</span><span class="fl">Landed on home</span></div>
+          <div class="fstep alt" style="width:58%"><span class="fn">3</span><span class="fl">Grade &amp; stream entered</span></div>
+          <div class="fstep alt" style="width:42%"><span class="fn">4</span><span class="fl">Any activity</span></div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
       <h3 style="margin-top:0">Panel 3 — Authentication</h3>
       <table>
         <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
-        <tr><td>Truecaller adoption</td><td><span class="tag tag-block">P0</span></td><td>% verified via Truecaller vs manual OTP.</td></tr>
+        <tr><td>Auth-source split</td><td><span class="tag tag-block">P0</span></td><td>% verified via <b>Truecaller vs manual OTP</b>.</td></tr>
         <tr><td>OTP verify-success rate</td><td><span class="tag tag-block">P0</span></td><td>Verified ÷ OTPs requested.</td></tr>
         <tr><td>OTP invalid rate &amp; avg attempts</td><td><span class="tag tag-block">P0</span></td><td>Invalid entries ÷ attempts; mean tries to pass.</td></tr>
         <tr><td>Resend rate &amp; channel split</td><td><span class="tag tag-defer">P1</span></td><td>Resends ÷ OTP screens; SMS vs WhatsApp.</td></tr>
         <tr><td>Edit-number rate</td><td><span class="tag tag-defer">P1</span></td><td>How often users go back to fix the number.</td></tr>
         <tr><td>Android auto-read success</td><td><span class="tag tag-defer">P1</span></td><td>Auto-read + auto-verify ÷ Android permission-granted.</td></tr>
         <tr><td>Median time to verify</td><td><span class="tag tag-defer">P1</span></td><td>Phone screen → verified.</td></tr>
-        <tr><td>Paste / autofill usage</td><td><span class="tag tag-defer">P1</span></td><td>Share of numbers pasted vs typed.</td></tr>
       </table>
     </div>
 
@@ -688,21 +727,18 @@
         <tr><td>Taste start rate</td><td><span class="tag tag-block">P0</span></td><td>Taste started ÷ Unknown verified.</td></tr>
         <tr><td>Taste completion rate</td><td><span class="tag tag-block">P0</span></td><td>All-3-correct finishes ÷ taste started.</td></tr>
         <tr><td>Drop-off by checkpoint</td><td><span class="tag tag-block">P0</span></td><td>Where users abandon — checkpoint 1, 2 or 3.</td></tr>
-        <tr><td>First-attempt score distribution</td><td><span class="tag tag-block">P0</span></td><td>Share scoring 0/1/2/3 on first tries.</td></tr>
-        <tr><td>Avg attempts per checkpoint</td><td><span class="tag tag-defer">P1</span></td><td>Retries needed to pass each question.</td></tr>
         <tr><td>Answered during play vs pause</td><td><span class="tag tag-defer">P1</span></td><td>Share answered before vs at the forced pause.</td></tr>
         <tr><td>Median time per checkpoint &amp; total</td><td><span class="tag tag-defer">P1</span></td><td>Time on each question and the full taste.</td></tr>
-        <tr><td>Video-fail → home rate</td><td><span class="tag tag-defer">P1</span></td><td>How often a load failure short-circuits to home.</td></tr>
       </table>
     </div>
 
     <div class="card">
-      <h3 style="margin-top:0">Panel 5 — Subject &nbsp;·&nbsp; Panel 6 — Grade gate</h3>
+      <h3 style="margin-top:0">Panel 5 — Subject &amp; grade gate</h3>
       <h4>Subject (Unknown)</h4>
       <table>
         <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
         <tr><td>Selection vs skip rate</td><td><span class="tag tag-block">P0</span></td><td>Chose a subject vs skipped (it's optional).</td></tr>
-        <tr><td>Subject distribution</td><td><span class="tag tag-defer">P1</span></td><td>Which subjects are picked.</td></tr>
+        <tr><td>Subject distribution</td><td><span class="tag tag-block">P0</span></td><td>Which subjects are picked.</td></tr>
       </table>
       <h4>Deferred grade gate</h4>
       <table>
@@ -711,28 +747,6 @@
         <tr><td>Grade answer rate</td><td><span class="tag tag-block">P0</span></td><td>Grade submitted ÷ gate triggered.</td></tr>
         <tr><td>Triggering-feature split</td><td><span class="tag tag-defer">P1</span></td><td>Which feature most often triggers the gate.</td></tr>
         <tr><td>Dismiss / re-prompt rate</td><td><span class="tag tag-defer">P1</span></td><td>Gate backed out of before answering.</td></tr>
-        <tr><td>Program / year distribution</td><td><span class="tag tag-defer">P1</span></td><td>Captured grade mix.</td></tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0">Panel 7 — Drop-off &amp; resume &nbsp;·&nbsp; Panel 8 — Known journey</h3>
-      <h4>Drop-off &amp; resume</h4>
-      <table>
-        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
-        <tr><td>Drop-off by stage</td><td><span class="tag tag-block">P0</span></td><td>Pre-verification vs post-verification abandonment.</td></tr>
-        <tr><td>Pre-verify restart rate</td><td><span class="tag tag-block">P0</span></td><td>Users who restart (no account) on return.</td></tr>
-        <tr><td>Resume rate</td><td><span class="tag tag-block">P0</span></td><td>Post-verify droppers who come back and finish.</td></tr>
-        <tr><td>Name re-ask rate</td><td><span class="tag tag-defer">P1</span></td><td>Dropped at the name step and re-prompted.</td></tr>
-        <tr><td>Known content-restore rate</td><td><span class="tag tag-defer">P1</span></td><td>Same-deep-link reopens that restore the content.</td></tr>
-        <tr><td>Existing-user login rate</td><td><span class="tag tag-defer">P1</span></td><td>Verifications that match an existing account.</td></tr>
-      </table>
-      <h4>Known journey</h4>
-      <table>
-        <tr><th style="width:38%">Metric</th><th style="width:9%">Pri</th><th>Definition</th></tr>
-        <tr><td>Name-after-OTP completion</td><td><span class="tag tag-block">P0</span></td><td>Known users who pass the name step to reach content.</td></tr>
-        <tr><td>Paywall-intercept rate</td><td><span class="tag tag-defer">P1</span></td><td>Free users hitting GO PRO on a paywalled deep link.</td></tr>
-        <tr><td>First-reward popup engagement</td><td><span class="tag tag-defer">P1</span></td><td>Shown vs dismissed on home return.</td></tr>
       </table>
     </div>
 
