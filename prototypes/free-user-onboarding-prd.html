@@ -142,6 +142,7 @@
     <a class="chapter" href="#metrics">Metrics</a>
     <a class="chapter" href="#tracking">Tracking</a>
     <a class="chapter" href="#dashboard">Dashboard</a>
+    <a class="chapter" href="#changes">Changes</a>
   </div>
 </nav>
 
@@ -755,6 +756,20 @@
         <tr><td>Verification cohort</td><td>The week/month a user first verified — not install or first-open day.</td></tr>
         <tr><td>Resume vs restart</td><td>The dividing line is verification: before it → restart (no account); after → resume.</td></tr>
         <tr><td>Taste completion</td><td>All 3 checkpoints answered correctly (finish). Distinct from taste started.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 13 ───────────────────────── -->
+  <section id="changes" class="fade">
+    <div class="sec-head"><div class="sec-num">13</div><h2>Changes <span class="tag tag-defer" style="font-size:11px">Working list</span></h2></div>
+    <p class="lead" style="margin-bottom:12px">Running list of change requests against the current build, folded into the spec above as each is confirmed. <span style="color:var(--muted)">(Captured from the verbal brief — the shared Figma couldn't be opened from here, so items marked <b>Confirm</b> are my best reading.)</span></p>
+    <div class="card">
+      <table>
+        <tr><th style="width:40px">#</th><th style="width:23%">Screen / area</th><th>Change</th><th style="width:110px">Status</th></tr>
+        <tr><td><b>1</b></td><td>Home — Question Bank card</td><td>The Question Bank card must <b>display the number of questions</b> that question bank contains.</td><td><span class="tag tag-both">To build</span></td></tr>
+        <tr><td><b>2</b></td><td>Home — profile circle &amp; bottom cards</td><td><b>Enable</b> the premium-user profile circle and the <b>last cards at the end of the home page</b> — make them functional / tappable (currently placeholder).</td><td><span class="tag tag-defer">Confirm</span></td></tr>
+        <tr><td><b>3</b></td><td>Video + question screen</td><td>The <b>select-subject → unlock-video</b> animation should play <b>in-place on the same screen</b> — it must not open a new page; the animation is updated there.</td><td><span class="tag tag-defer">Confirm</span></td></tr>
       </table>
     </div>
   </section>
