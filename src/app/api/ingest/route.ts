@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         action: "updated",
         template: updated ? toMeta(updated) : null,
-        shareUrl: updated ? `${origin}/v/${updated.share_token}` : null,
+        shareUrl: updated ? `${origin}/v/${updated.slug}` : null,
       });
     }
   }
@@ -74,6 +74,6 @@ export async function POST(request: Request) {
   return NextResponse.json({
     action: "created",
     template: toMeta(created),
-    shareUrl: `${origin}/v/${created.share_token}`,
+    shareUrl: `${origin}/v/${created.slug}`,
   });
 }

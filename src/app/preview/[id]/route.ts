@@ -1,25 +1,16 @@
-import { getSession } from "@/lib/auth";
 import { getTemplate } from "@/lib/db";
 import { noticeHtml } from "@/lib/serve-html";
 
 const HTML_HEADERS = { "content-type": "text/html; charset=utf-8" };
 
-// Admin-only render used by gallery card iframes and the "Open" action.
+// Public render by id — serves exactly the same HTML as the /v/ share links, so
+// it's safe to open or share without signing in. Used by gallery card iframes
+// and the "Open full screen" action. (Managing templates still needs admin auth,
+// which is enforced on the dashboard page and every /api admin route.)
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!(await getSession())) {
-    return new Response(
-      noticeHtml({
-        title: "Sign in required",
-        message: "Please sign in to preview this template.",
-        code: 401,
-      }),
-      { status: 401, headers: HTML_HEADERS }
-    );
-  }
-
   const { id } = await params;
   const tpl = await getTemplate(id);
   if (!tpl) {

@@ -2,9 +2,11 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   getShareLinkByToken,
   getTemplate,
+  getTemplateBySlug,
   getTemplateByToken,
   recordVisit,
 } from "@/lib/db";
+import type { Template } from "@/lib/types";
 import { noticeHtml } from "@/lib/serve-html";
 
 const HTML_HEADERS = { "content-type": "text/html; charset=utf-8" };
@@ -23,13 +25,28 @@ function serve(html: string, setCookie?: string): Response {
   return new Response(html, { status: 200, headers });
 }
 
-// Public, unguessable share link — records the visit, then serves the template.
+// Public share link. Resolves in three steps, old links first:
+//   1. a share_links.token  → any existing default or named link (unchanged)
+//   2. a template slug       → that template's default link (pretty /v/<slug>)
+//   3. legacy template.share_token with no link row
+// Slug hits are recorded against the template's default link, so /v/<slug> and
+// the older /v/<token> share one set of stats.
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
-  const link = await getShareLinkByToken(token);
+
+  let link = await getShareLinkByToken(token);
+
+  // Pretty default link: /v/<slug> → the template's default share link.
+  let slugTemplate: Template | null = null;
+  if (!link) {
+    slugTemplate = await getTemplateBySlug(token);
+    if (slugTemplate) {
+      link = await getShareLinkByToken(slugTemplate.share_token);
+    }
+  }
 
   if (link) {
     if (!link.enabled) {
@@ -44,7 +61,7 @@ export async function GET(
         { status: 410, headers: HTML_HEADERS }
       );
     }
-    const tpl = await getTemplate(link.template_id);
+    const tpl = slugTemplate ?? (await getTemplate(link.template_id));
     if (!tpl) {
       return new Response(
         noticeHtml({
@@ -85,8 +102,8 @@ export async function GET(
     return serve(tpl.html, setCookie);
   }
 
-  // Legacy fallback: token matches a template's original share_token.
-  const legacy = await getTemplateByToken(token);
+  // Legacy fallback: a slug'd template (or original share_token) with no link row.
+  const legacy = slugTemplate ?? (await getTemplateByToken(token));
   if (legacy && legacy.share_enabled) {
     return serve(legacy.html);
   }

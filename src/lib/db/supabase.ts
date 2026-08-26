@@ -45,6 +45,15 @@ export const supabaseDb = {
     if (error) throw error;
     return (data as Template | null) ?? null;
   },
+  async getBySlug(slug: string): Promise<Template | null> {
+    const { data, error } = await client()
+      .from("templates")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as Template | null) ?? null;
+  },
   async getBySourcePath(p: string): Promise<Template | null> {
     const { data, error } = await client()
       .from("templates")

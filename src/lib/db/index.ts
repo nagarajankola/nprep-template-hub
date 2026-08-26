@@ -29,6 +29,9 @@ export function getTemplate(id: string): Promise<Template | null> {
 export function getTemplateByToken(token: string): Promise<Template | null> {
   return backend().getByToken(token);
 }
+export function getTemplateBySlug(slug: string): Promise<Template | null> {
+  return backend().getBySlug(slug);
+}
 export function getTemplateBySourcePath(p: string): Promise<Template | null> {
   return backend().getBySourcePath(p);
 }

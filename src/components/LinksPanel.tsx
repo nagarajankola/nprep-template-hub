@@ -15,9 +15,15 @@ import type { ShareLink, LinkStats } from "@/lib/types";
  */
 export function LinksPanel({
   templateId,
+  slug,
+  shareToken,
   statsDefaultOpen = false,
 }: {
   templateId: string;
+  /** Template slug — shown as the pretty URL for the default link. */
+  slug?: string;
+  /** Template's legacy default token — identifies which link is the default. */
+  shareToken?: string;
   statsDefaultOpen?: boolean;
 }) {
   const toast = useToast();
@@ -124,6 +130,8 @@ export function LinksPanel({
             <LinkRow
               key={l.id}
               link={l}
+              slug={slug}
+              shareToken={shareToken}
               statsDefaultOpen={statsDefaultOpen}
               onPatched={(u) =>
                 setLinks((prev) => (prev ?? []).map((x) => (x.id === u.id ? u : x)))
@@ -141,18 +149,25 @@ export function LinksPanel({
 
 function LinkRow({
   link,
+  slug,
+  shareToken,
   statsDefaultOpen = false,
   onPatched,
   onRemoved,
 }: {
   link: ShareLink;
+  slug?: string;
+  shareToken?: string;
   statsDefaultOpen?: boolean;
   onPatched: (l: ShareLink) => void;
   onRemoved: (id: string) => void;
 }) {
   const toast = useToast();
   const [showStats, setShowStats] = useState(statsDefaultOpen);
-  const url = `${typeof window !== "undefined" ? window.location.origin : ""}/v/${link.token}`;
+  // The default link shows the pretty slug URL; named links show their token.
+  const isDefault = !!shareToken && link.token === shareToken;
+  const pathId = isDefault && slug ? slug : link.token;
+  const url = `${typeof window !== "undefined" ? window.location.origin : ""}/v/${pathId}`;
 
   async function copy() {
     try {
@@ -216,7 +231,7 @@ function LinkRow({
 
       <div className="mt-2 flex items-center gap-1.5">
         <code className="min-w-0 flex-1 truncate rounded-lg bg-mist px-2.5 py-1.5 text-[11px] text-midnight">
-          /v/{link.token}
+          /v/{pathId}
         </code>
         <button
           onClick={copy}

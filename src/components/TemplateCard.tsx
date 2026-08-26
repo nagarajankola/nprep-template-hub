@@ -34,7 +34,7 @@ export function TemplateCard({
   async function copyDefault() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     try {
-      await navigator.clipboard.writeText(`${origin}/v/${template.share_token}`);
+      await navigator.clipboard.writeText(`${origin}/v/${template.slug}`);
       toast("Default link copied");
     } catch {
       toast("Couldn't copy link", "err");

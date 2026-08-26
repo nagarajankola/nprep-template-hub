@@ -34,7 +34,7 @@ export function DetailModal({
   async function copyDefault() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     try {
-      await navigator.clipboard.writeText(`${origin}/v/${template.share_token}`);
+      await navigator.clipboard.writeText(`${origin}/v/${template.slug}`);
       toast("Default link copied");
     } catch {
       toast("Couldn't copy link", "err");
@@ -157,7 +157,12 @@ export function DetailModal({
           Each link opens only this prototype. Disable or rotate any link any time.
         </p>
         <div className="mt-3">
-          <LinksPanel templateId={template.id} statsDefaultOpen />
+          <LinksPanel
+            templateId={template.id}
+            slug={template.slug}
+            shareToken={template.share_token}
+            statsDefaultOpen
+          />
         </div>
       </div>
     </Modal>

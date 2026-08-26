@@ -24,7 +24,11 @@ export function LinksModal({
       </div>
 
       <div className="mt-4">
-        <LinksPanel templateId={template.id} />
+        <LinksPanel
+          templateId={template.id}
+          slug={template.slug}
+          shareToken={template.share_token}
+        />
       </div>
     </Modal>
   );
