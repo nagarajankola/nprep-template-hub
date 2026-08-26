@@ -21,7 +21,9 @@ deploy on Vercel. See `README.md` for usage.
   imports relative (not `@/`).
 - **Auth** `src/lib/auth.ts` — env creds + `jose` HS256 JWT in an httpOnly cookie.
 - **Templates stored as self-contained HTML** (assets inlined via `src/lib/inline-assets.ts`).
-- `/v/[token]` public share, `/preview/[id]` admin render (both raw HTML responses).
+- `/v/[token]` public share, `/preview/[id]` public render-by-id (both raw HTML responses,
+  both public so "Open full screen" / preview URLs are shareable). Admin auth still gates the
+  dashboard page and every `/api/*` route.
 
 ## Run / import
 - `npm run dev` (login admin / Qwerty123#) · `npm run import -- <folder|file>`.
